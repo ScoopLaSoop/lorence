@@ -895,14 +895,13 @@
 //  (mets les fichiers dans le même dossier que index.html)
 // ============================================================
 const WIN_VIDEOS = [
-  'IMG_2184.MOV',
-  'IMG_2185.MOV',
-  'IMG_2188.MOV',
+  'Correct1.m4a',
+  'Correct2.m4a',
+  'Correct3.m4a',
 ];
 
 const LOSE_VIDEOS = [
-  '154E50A0-B16B-45E8-87A5-1896695C560F.MOV',
-  '5384C0BF-52A8-4E92-AC97-55781BD8FA99.MOV',
+  'Faux1.m4a',
 ];
 
 // ============================================================
@@ -1833,23 +1832,21 @@ function scheduleFart() {
 }
 
 // ============================================================
-//  VIDÉO (audio uniquement — jamais affiché)
+//  AUDIO
 // ============================================================
 function playVideo(src) {
   stopAllVideos();
-  const vid = document.createElement('video');
-  vid.src = src;
-  vid.playsinline = true;
-  vid.volume = 1.0;
-  vid.style.display = 'none';
-  document.getElementById('audioContainer').appendChild(vid);
-  currentVideoEl = vid;
-  vid.play().catch(() => {});
+  const aud = document.createElement('audio');
+  aud.src = src;
+  aud.volume = 1.0;
+  document.getElementById('audioContainer').appendChild(aud);
+  currentVideoEl = aud;
+  aud.play().catch(() => {});
 }
 
 function stopAllVideos() {
   const container = document.getElementById('audioContainer');
-  container.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; v.remove(); });
+  container.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; a.remove(); });
   currentVideoEl = null;
 }
 
