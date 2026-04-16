@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CLÉMENT VS JERRY — Le Jugement Dernier</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #39ff14;
+    --green-dark: #00cc44;
+    --red: #ff0044;
+    --yellow: #ffcc00;
+    --bg: #060810;
+    --portal: #00ff88;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: var(--bg);
+    color: #fff;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== PORTAL BACKGROUND ===== */
+  .portal-bg {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; overflow: hidden; pointer-events: none;
+  }
+  .portal-bg::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    width: 200vmax; height: 200vmax;
+    transform: translate(-50%, -50%);
+    background: conic-gradient(from 0deg,transparent 0deg,rgba(57,255,20,.03) 30deg,transparent 60deg,rgba(0,255,136,.04) 90deg,transparent 120deg,rgba(57,255,20,.03) 150deg,transparent 180deg,rgba(0,255,136,.04) 210deg,transparent 240deg,rgba(57,255,20,.03) 270deg,transparent 300deg,rgba(0,255,136,.04) 330deg,transparent 360deg);
+    animation: portalSpin 20s linear infinite;
+  }
+  .portal-bg::after {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    width: 100vmax; height: 100vmax;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center,rgba(57,255,20,.08) 0%,rgba(0,255,136,.05) 25%,transparent 60%);
+    animation: portalPulse 4s ease-in-out infinite;
+  }
+  @keyframes portalSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+  @keyframes portalPulse {
+    0%,100% { opacity:.5; transform: translate(-50%,-50%) scale(1); }
+    50% { opacity:1; transform: translate(-50%,-50%) scale(1.1); }
+  }
+
+  .particles { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+  .particle {
+    position:absolute; width:3px; height:3px;
+    background:var(--green); border-radius:50%; opacity:0;
+    animation: floatUp linear infinite;
+    box-shadow: 0 0 6px var(--green);
+  }
+  @keyframes floatUp {
+    0% { opacity:0; transform:translateY(100vh) rotate(0deg); }
+    10% { opacity:.8; } 90% { opacity:.3; }
+    100% { opacity:0; transform:translateY(-20px) rotate(720deg); }
+  }
+
+  /* ===== LAYOUT ===== */
+  .screen {
+    position: relative; z-index:1;
+    min-height: 100vh; min-height: 100dvh;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 70px 16px 20px;
+    text-align: center;
+  }
+  .screen.active { display: flex; }
+
+  /* ===== FLASH OVERLAY ===== */
+  .flash-overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    z-index:1000; pointer-events:none; opacity:0; transition:opacity .1s;
+  }
+  .flash-overlay.red { background:rgba(255,0,68,.7); }
+  .flash-overlay.green { background:rgba(57,255,20,.45); }
+  .flash-overlay.flash { opacity:1; }
+
+  /* ===== SHAKE ===== */
+  @keyframes shake {
+    0%,100% { transform:translate(0,0) rotate(0deg); }
+    10% { transform:translate(-12px,-8px) rotate(-3deg); }
+    20% { transform:translate(12px,8px) rotate(3deg); }
+    30% { transform:translate(-10px,6px) rotate(-2deg); }
+    40% { transform:translate(10px,-6px) rotate(2deg); }
+    50% { transform:translate(-14px,4px) rotate(-4deg); }
+    60% { transform:translate(14px,-4px) rotate(4deg); }
+    70% { transform:translate(-8px,-10px) rotate(-1deg); }
+    80% { transform:translate(8px,10px) rotate(1deg); }
+    90% { transform:translate(-4px,-6px) rotate(-2deg); }
+  }
+  .shake { animation: shake .6s ease-in-out; }
+
+  /* ===== GLITCH ===== */
+  @keyframes glitch {
+    0%,100% { transform:translate(0); }
+    20% { transform:translate(-4px,2px); color:var(--red); }
+    40% { transform:translate(4px,-2px); }
+    60% { transform:translate(-2px,2px); color:var(--green); }
+    80% { transform:translate(2px,-2px); }
+  }
+
+  /* ===== BIRTHDAY BANNER ===== */
+  .birthday-banner {
+    position:fixed; top:0; left:0; width:100%;
+    background: linear-gradient(90deg,var(--red),#ff6600,var(--yellow),var(--green),#0066ff,#9900ff,var(--red));
+    background-size: 400% 100%;
+    animation: rainbowSlide 3s linear infinite;
+    padding: 8px 10px;
+    text-align:center;
+    font-family:'Bangers',cursive;
+    font-size: clamp(.75rem, 2.5vw, 1.05rem);
+    letter-spacing: 2px;
+    color:#000; z-index:999;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  @keyframes rainbowSlide { 0% { background-position:0% 50%; } 100% { background-position:100% 50%; } }
+
+  /* ===== SOUND / MUSIC CONTROLS ===== */
+  .controls-bar {
+    position:fixed; top:42px; right:10px;
+    z-index:998; display:flex; gap:8px; align-items:center;
+  }
+  .ctrl-btn {
+    background:rgba(0,0,0,.75); border:1px solid rgba(255,255,255,.2);
+    border-radius:50%; width:42px; height:42px; font-size:1.1rem;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all .2s; color:#fff;
+  }
+  .ctrl-btn:hover { background:rgba(57,255,20,.15); border-color:var(--green); }
+  .ctrl-btn.muted { opacity:.45; text-decoration:line-through; }
+
+  /* Indicateur event imminent */
+  .event-warning {
+    display:none; font-family:'Bangers',cursive; font-size:.85rem;
+    letter-spacing:2px; color:var(--yellow);
+    background:rgba(255,204,0,.12); border:1px solid rgba(255,204,0,.4);
+    border-radius:20px; padding:4px 12px;
+    animation:eventWarn 0.8s ease-in-out infinite;
+  }
+  .event-warning.visible { display:block; }
+  @keyframes eventWarn {
+    0%,100% { opacity:1; transform:scale(1); }
+    50% { opacity:.5; transform:scale(1.05); }
+  }
+
+  /* ===== ÉCRAN INTRO ===== */
+  #screen-intro .logo {
+    font-family:'Bangers',cursive;
+    font-size: clamp(2.8rem, 11vw, 7.5rem);
+    line-height:1; letter-spacing:4px;
+    color:var(--green);
+    text-shadow: 0 0 20px var(--green), 0 0 40px var(--green), 4px 4px 0 #003300, -2px -2px 0 #000;
+    animation: glitch 4s ease-in-out infinite;
+    margin-bottom:8px;
+  }
+  #screen-intro .logo span { color:var(--yellow); text-shadow:0 0 20px var(--yellow),4px 4px 0 #664400; }
+  #screen-intro .subtitle { font-size:clamp(.85rem,2.5vw,1.3rem); color:#aaa; margin-bottom:8px; font-style:italic; }
+
+  #screen-intro .warning {
+    background:rgba(255,0,68,.12); border:2px solid var(--red);
+    border-radius:12px; padding:12px 20px; margin:12px 0;
+    font-size:clamp(.75rem,2vw,.95rem); max-width:480px; color:#ffaaaa;
+  }
+  #screen-intro .jerry-intro {
+    display:flex; gap:20px; align-items:center;
+    margin:14px 0; flex-wrap:wrap; justify-content:center;
+  }
+  #screen-intro .player-intro { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  #screen-intro .player-intro img {
+    width: clamp(80px,22vw,120px); height: clamp(80px,22vw,120px);
+    object-fit:cover; border-radius:50%;
+    border:4px solid var(--green); box-shadow:0 0 20px var(--green);
+  }
+  #screen-intro .vs-text {
+    font-family:'Bangers',cursive; font-size:clamp(2.5rem,8vw,4rem);
+    color:var(--red); text-shadow:0 0 15px var(--red),3px 3px 0 #440000;
+    animation:portalPulse 1.5s ease-in-out infinite;
+  }
+  .player-name { font-family:'Bangers',cursive; font-size:clamp(1.1rem,3.5vw,1.4rem); letter-spacing:2px; }
+
+  .btn-start {
+    font-family:'Bangers',cursive; font-size:clamp(1.3rem,4vw,1.9rem);
+    letter-spacing:3px;
+    background:linear-gradient(135deg,var(--green),var(--green-dark));
+    color:#000; border:none; padding:16px 45px;
+    border-radius:50px; cursor:pointer; margin-top:12px;
+    box-shadow:0 0 30px var(--green),0 5px 15px rgba(0,0,0,.5);
+    transition:all .2s; text-transform:uppercase;
+    animation:btnPulse 2s ease-in-out infinite;
+    -webkit-tap-highlight-color:transparent;
+    touch-action: manipulation;
+  }
+  @keyframes btnPulse {
+    0%,100% { transform:scale(1); box-shadow:0 0 30px var(--green); }
+    50% { transform:scale(1.05); box-shadow:0 0 50px var(--green),0 0 80px rgba(57,255,20,.3); }
+  }
+  .btn-start:hover { transform:scale(1.08)!important; animation:none; }
+  .btn-start:active { transform:scale(.95)!important; }
+
+  /* ===== ÉCRAN QUESTION ===== */
+  #screen-question .hud {
+    display:flex; justify-content:space-between; align-items:center;
+    width:100%; max-width:680px; margin-bottom:12px;
+    padding:10px 16px;
+    background:rgba(57,255,20,.07); border:1px solid rgba(57,255,20,.3);
+    border-radius:14px; font-family:'Bangers',cursive;
+    font-size:clamp(1rem,3vw,1.3rem); letter-spacing:2px;
+    flex-wrap:wrap; gap:6px;
+  }
+  .hud-score { color:var(--green); }
+  .hud-score span { color:var(--yellow); font-size:clamp(1.1rem,3.5vw,1.6rem); }
+  .hud-qnum { color:#aaa; }
+  .streak { font-family:'Bangers',cursive; font-size:.95rem; color:var(--yellow); letter-spacing:2px; opacity:0; transition:opacity .3s; }
+  .streak.visible { opacity:1; }
+
+  .progress-bar-container {
+    width:100%; max-width:680px; height:5px;
+    background:rgba(255,255,255,.1); border-radius:3px;
+    margin-bottom:14px; overflow:hidden;
+  }
+  .progress-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg,var(--green),var(--yellow));
+    border-radius:3px; transition:width .5s ease;
+    box-shadow:0 0 10px var(--green);
+  }
+
+  .question-text {
+    font-family:'Bangers',cursive;
+    font-size:clamp(1.4rem,4.5vw,2.8rem);
+    letter-spacing:1px; color:#fff;
+    text-shadow:2px 2px 0 #000,0 0 20px rgba(255,255,255,.3);
+    max-width:680px; line-height:1.25;
+    margin-bottom:22px; padding:16px 20px;
+    background:rgba(0,0,0,.55); border-radius:18px;
+    border:2px solid rgba(255,255,255,.1);
+  }
+  .question-text .emoji-q { font-size:1.8rem; display:block; margin-bottom:6px; }
+
+  .choices {
+    display:flex; gap:20px; justify-content:center;
+    align-items:stretch; flex-wrap:wrap;
+    width:100%; max-width:680px;
+  }
+  .choice-btn {
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    cursor:pointer;
+    background:rgba(255,255,255,.05);
+    border:3px solid rgba(255,255,255,.2);
+    border-radius:22px; padding:16px 12px;
+    flex:1; min-width:130px; max-width:220px;
+    transition:all .2s; user-select:none;
+    position:relative; overflow:hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .choice-btn::before {
+    content:''; position:absolute; top:0; left:-100%;
+    width:100%; height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);
+    transition:left .3s;
+  }
+  .choice-btn:hover::before { left:100%; }
+  .choice-btn:hover {
+    transform:scale(1.07) translateY(-5px);
+    border-color:var(--green);
+    box-shadow:0 10px 30px rgba(57,255,20,.3),0 0 20px rgba(57,255,20,.2);
+    background:rgba(57,255,20,.08);
+  }
+  .choice-btn:active { transform:scale(.95)!important; }
+  .choice-btn img {
+    width: clamp(90px,22vw,130px); height: clamp(90px,22vw,130px);
+    object-fit:cover; border-radius:50%;
+    border:4px solid rgba(255,255,255,.2); transition:all .2s; pointer-events:none;
+  }
+  .choice-btn:hover img { border-color:var(--green); box-shadow:0 0 25px var(--green); animation:wiggle .3s ease-in-out infinite; }
+  @keyframes wiggle { 0%,100% { transform:rotate(-3deg); } 50% { transform:rotate(3deg); } }
+  .choice-name { font-family:'Bangers',cursive; font-size:clamp(1.2rem,3.5vw,1.6rem); letter-spacing:3px; transition:color .2s; }
+  .choice-btn:hover .choice-name { color:var(--green); }
+  .choice-hint { font-size:.7rem; color:#555; font-style:italic; }
+
+  /* ===== ÉCRAN RÉSULTAT ===== */
+  .result-emoji { font-size:clamp(3.5rem,13vw,7rem); animation:bounceIn .5s cubic-bezier(.68,-.55,.265,1.55); margin-bottom:8px; }
+  @keyframes bounceIn {
+    0% { transform:scale(0) rotate(-20deg); opacity:0; }
+    60% { transform:scale(1.3) rotate(5deg); }
+    100% { transform:scale(1) rotate(0deg); opacity:1; }
+  }
+  .result-title {
+    font-family:'Bangers',cursive;
+    font-size:clamp(2rem,9vw,5.5rem);
+    letter-spacing:3px; line-height:1; margin-bottom:12px;
+    animation:bounceIn .5s .1s cubic-bezier(.68,-.55,.265,1.55) both;
+  }
+  .result-title.wrong { color:var(--red); text-shadow:0 0 30px var(--red),4px 4px 0 #440000; }
+  .result-title.right { color:var(--green); text-shadow:0 0 30px var(--green),4px 4px 0 #003300; }
+  .result-sub {
+    font-size:clamp(.9rem,2.5vw,1.3rem); color:#ddd;
+    max-width:480px; margin-bottom:16px; padding:14px;
+    background:rgba(0,0,0,.6); border-radius:14px;
+    animation:bounceIn .5s .2s both;
+  }
+  .result-correct-answer {
+    padding:10px 22px; border-radius:50px;
+    font-family:'Bangers',cursive; font-size:clamp(1rem,2.5vw,1.2rem);
+    letter-spacing:2px; margin-bottom:16px;
+    animation:bounceIn .5s .3s both; max-width:480px;
+  }
+  .result-correct-answer.wrong { background:rgba(255,0,68,.2); border:2px solid var(--red); color:#ff8899; }
+  .result-correct-answer.right { background:rgba(57,255,20,.1); border:2px solid var(--green); color:var(--green); }
+  .btn-next {
+    font-family:'Bangers',cursive; font-size:clamp(1.3rem,4vw,1.6rem);
+    letter-spacing:3px;
+    background:linear-gradient(135deg,var(--yellow),#ff8800);
+    color:#000; border:none; padding:14px 40px;
+    border-radius:50px; cursor:pointer;
+    box-shadow:0 0 20px rgba(255,200,0,.5);
+    transition:all .2s;
+    animation:bounceIn .5s .4s both;
+    touch-action: manipulation;
+  }
+  .btn-next:hover { transform:scale(1.05); box-shadow:0 0 35px rgba(255,200,0,.7); }
+  .btn-next:active { transform:scale(.95); }
+
+  /* ===== LOSER RAIN ===== */
+  .loser-rain { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:500; overflow:hidden; }
+  .loser-word {
+    position:absolute;
+    font-family:'Bangers',cursive; font-size:clamp(1.5rem,5vw,3rem);
+    color:var(--red); text-shadow:2px 2px 0 #440000;
+    animation:fallDown 1.5s cubic-bezier(.25,.46,.45,.94) forwards; opacity:0;
+  }
+  @keyframes fallDown {
+    0% { transform:translateY(-100px) rotate(var(--rot)); opacity:1; }
+    70% { opacity:1; }
+    100% { transform:translateY(110vh) rotate(calc(var(--rot) + 360deg)); opacity:0; }
+  }
+
+  /* ===== FART POPUP ===== */
+  .fart-popup {
+    position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+    z-index:700; background:rgba(0,0,0,.9);
+    border:2px solid #8B4513; border-radius:25px;
+    padding:10px 22px; font-family:'Bangers',cursive;
+    font-size:clamp(1rem,3vw,1.4rem); letter-spacing:2px;
+    color:#D2691E; pointer-events:none;
+    animation:fartPopup 3s forwards;
+    white-space:nowrap;
+  }
+  @keyframes fartPopup {
+    0% { opacity:0; transform:translateX(-50%) translateY(20px) scale(.8); }
+    15% { opacity:1; transform:translateX(-50%) translateY(0) scale(1.1); }
+    25% { transform:translateX(-50%) translateY(0) scale(1); }
+    70% { opacity:1; }
+    100% { opacity:0; transform:translateX(-50%) translateY(-30px); }
+  }
+
+  /* ===== VIDEO CONTAINER ===== */
+  .video-container {
+    position:fixed; bottom:16px; right:12px; z-index:900;
+    display:none; flex-direction:column; align-items:flex-end; gap:6px;
+  }
+  .video-container.visible { display:flex; }
+  .video-container video { width:clamp(130px,35vw,200px); border-radius:12px; border:3px solid var(--red); box-shadow:0 0 20px var(--red); }
+  .btn-mute { font-size:.75rem; background:rgba(255,0,68,.3); border:1px solid var(--red); color:#fff; padding:4px 10px; border-radius:20px; cursor:pointer; }
+
+  /* ===== QUICK CLICK EVENT ===== */
+  .quick-event-overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    z-index:2000; background:rgba(0,0,10,.95);
+    display:none; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:20px; text-align:center;
+    animation: quickIn .4s cubic-bezier(.68,-.55,.265,1.55);
+  }
+  .quick-event-overlay.active { display:flex; }
+  @keyframes quickIn {
+    0% { opacity:0; transform:scale(.8); }
+    100% { opacity:1; transform:scale(1); }
+  }
+  .quick-event-title {
+    font-family:'Bangers',cursive;
+    font-size:clamp(1.8rem,7vw,4rem);
+    color:var(--yellow);
+    text-shadow:0 0 30px var(--yellow),3px 3px 0 #664400;
+    letter-spacing:3px; margin-bottom:8px;
+    animation:glitch 1s ease-in-out infinite;
+  }
+  .quick-event-instruction {
+    font-family:'Bangers',cursive;
+    font-size:clamp(1.3rem,5vw,2.5rem);
+    color:#fff; letter-spacing:2px; margin-bottom:20px;
+    max-width:600px;
+  }
+  .quick-event-instruction .target-name { color:var(--red); text-shadow:0 0 15px var(--red); }
+  .quick-timer {
+    font-family:'Bangers',cursive; font-size:clamp(3rem,12vw,7rem);
+    color:var(--red); text-shadow:0 0 40px var(--red),4px 4px 0 #440000;
+    margin-bottom:20px; line-height:1;
+    transition:color .1s;
+  }
+  .quick-timer.go { color:var(--green); text-shadow:0 0 40px var(--green),4px 4px 0 #003300; }
+  .quick-faces {
+    display:flex; gap:25px; justify-content:center; align-items:center; flex-wrap:wrap;
+  }
+  .quick-face-btn {
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+    cursor:pointer; padding:15px; border-radius:20px;
+    border:3px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.05);
+    transition:all .15s;
+    touch-action: manipulation;
+  }
+  .quick-face-btn img {
+    width:clamp(100px,25vw,150px); height:clamp(100px,25vw,150px);
+    object-fit:cover; border-radius:50%;
+    border:4px solid rgba(255,255,255,.3);
+    pointer-events:none;
+  }
+  .quick-face-btn:hover { transform:scale(1.1); border-color:var(--yellow); }
+  .quick-face-btn:active { transform:scale(.9); }
+  .quick-face-name { font-family:'Bangers',cursive; font-size:clamp(1.2rem,4vw,1.8rem); letter-spacing:3px; }
+  .quick-reaction-time {
+    font-family:'Bangers',cursive; font-size:clamp(1.5rem,5vw,2.5rem);
+    color:var(--yellow); letter-spacing:2px; margin-top:15px;
+  }
+
+  /* ===== BONUS GOAT ===== */
+  #screen-bonus .bonus-title {
+    font-family:'Bangers',cursive; font-size:clamp(1.8rem,7vw,4.5rem);
+    letter-spacing:4px; color:var(--yellow);
+    text-shadow:0 0 30px var(--yellow),4px 4px 0 #664400; margin-bottom:8px;
+  }
+  #screen-bonus .bonus-subtitle { color:#aaa; margin-bottom:20px; font-size:.95rem; font-style:italic; }
+  #screen-bonus .bonus-question {
+    font-family:'Bangers',cursive;
+    font-size:clamp(1.1rem,3.2vw,1.7rem); letter-spacing:1px;
+    background:rgba(255,204,0,.08); border:2px solid rgba(255,204,0,.3);
+    border-radius:14px; padding:18px; max-width:580px; margin-bottom:20px; line-height:1.4;
+  }
+  .bonus-choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:540px; width:100%; }
+  .bonus-choice {
+    font-size:.9rem; font-weight:700;
+    background:rgba(255,255,255,.05); border:2px solid rgba(255,255,255,.15);
+    color:#fff; padding:12px 14px; border-radius:12px;
+    cursor:pointer; transition:all .2s; text-align:left;
+    touch-action: manipulation;
+  }
+  .bonus-choice:hover { background:rgba(255,204,0,.1); border-color:var(--yellow); color:var(--yellow); }
+  .bonus-choice.correct { background:rgba(57,255,20,.2); border-color:var(--green); color:var(--green); }
+  .bonus-choice.wrong { background:rgba(255,0,68,.2); border-color:var(--red); color:var(--red); }
+
+  /* ===== RÉSULTATS FINAUX ===== */
+  #screen-final .final-title {
+    font-family:'Bangers',cursive; font-size:clamp(2rem,9vw,5.5rem);
+    letter-spacing:4px; color:var(--green);
+    text-shadow:0 0 30px var(--green),4px 4px 0 #003300; margin-bottom:4px;
+  }
+  .score-display {
+    font-family:'Bangers',cursive; font-size:clamp(3.5rem,14vw,7.5rem);
+    color:var(--yellow); text-shadow:0 0 40px var(--yellow),4px 4px 0 #664400;
+    line-height:1; margin:8px 0;
+  }
+  .score-label { font-size:.9rem; color:#777; margin-bottom:16px; }
+  .verdict-card {
+    background:rgba(0,0,0,.7); border:3px solid; border-radius:22px;
+    padding:20px 28px; max-width:520px; margin-bottom:20px;
+    animation:bounceIn .6s cubic-bezier(.68,-.55,.265,1.55) both;
+  }
+  .verdict-icon { font-size:2.5rem; margin-bottom:8px; }
+  .verdict-text { font-family:'Bangers',cursive; font-size:clamp(1.2rem,4vw,2rem); letter-spacing:2px; margin-bottom:6px; }
+  .verdict-sub { font-size:.9rem; color:#ccc; line-height:1.5; }
+  .btn-replay {
+    font-family:'Bangers',cursive; font-size:clamp(1.4rem,4vw,1.8rem); letter-spacing:3px;
+    background:linear-gradient(135deg,var(--red),#cc0033); color:#fff; border:none;
+    padding:14px 45px; border-radius:50px; cursor:pointer;
+    box-shadow:0 0 25px rgba(255,0,68,.5); transition:all .2s;
+    touch-action: manipulation;
+  }
+  .btn-replay:hover { transform:scale(1.05); }
+  @keyframes btnPulse2 {
+    0%,100% { transform:scale(1); box-shadow:0 0 30px rgba(255,0,136,.6); }
+    50% { transform:scale(1.05); box-shadow:0 0 55px rgba(255,0,136,.9),0 0 90px rgba(255,0,136,.4); }
+  }
+
+  /* ===== QUESTION SECRÈTE QUOIQUOU ===== */
+  .quoiquou-overlay {
+    position: fixed; top:0; left:0; width:100%; height:100%;
+    z-index: 3000;
+    background: #000;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px; text-align: center;
+    overflow: hidden;
+  }
+  .quoiquou-overlay.active { display: flex; }
+
+  .quoiquou-overlay::before {
+    content: '';
+    position: absolute; top:0; left:0; width:100%; height:100%;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,0,68,.03) 2px, rgba(255,0,68,.03) 4px
+    );
+    pointer-events: none; z-index:1;
+    animation: scanlines 0.1s linear infinite;
+  }
+  @keyframes scanlines { 0% { background-position: 0 0; } 100% { background-position: 0 4px; } }
+
+  .quoiquou-classified {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(.8rem, 2.5vw, 1rem);
+    letter-spacing: 8px; color: var(--red);
+    border: 2px solid var(--red);
+    padding: 4px 20px; margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--red);
+    position: relative; z-index: 2;
+    animation: glitch 0.5s ease-in-out infinite;
+  }
+
+  .quoiquou-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(2rem, 10vw, 6rem);
+    letter-spacing: 2px; line-height: 1;
+    color: #fff; margin-bottom: 8px;
+    position: relative; z-index: 2;
+    text-shadow: 3px 3px 0 var(--red), -3px -3px 0 var(--green),
+                 0 0 40px rgba(255,255,255,.5);
+    animation: quoiquouPulse 0.4s ease-in-out infinite alternate;
+  }
+  @keyframes quoiquouPulse {
+    from { transform: scale(1) skewX(0deg); text-shadow: 3px 3px 0 var(--red),-3px -3px 0 var(--green); }
+    to   { transform: scale(1.03) skewX(-1deg); text-shadow: -3px 3px 0 var(--green),3px -3px 0 var(--red); }
+  }
+
+  .quoiquou-sub {
+    font-size: clamp(.9rem, 2.5vw, 1.2rem);
+    color: #aaa; margin-bottom: 20px;
+    max-width: 480px; line-height: 1.5;
+    position: relative; z-index: 2;
+    background: rgba(0,0,0,.7); padding: 12px; border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+
+  .quoiquou-choices {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    position: relative; z-index: 2;
+  }
+
+  .quoiquou-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    cursor: pointer; padding: 16px 20px; border-radius: 20px;
+    border: 3px solid rgba(255,255,255,.3);
+    background: rgba(255,255,255,.06);
+    transition: all .15s;
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.2rem, 4vw, 1.6rem);
+    letter-spacing: 3px; color: #fff;
+    touch-action: manipulation;
+  }
+  .quoiquou-btn img {
+    width: clamp(80px, 20vw, 120px);
+    height: clamp(80px, 20vw, 120px);
+    object-fit: cover; border-radius: 50%;
+    border: 4px solid rgba(255,255,255,.3);
+    pointer-events: none;
+  }
+  .quoiquou-btn:hover { transform: scale(1.08); border-color: var(--yellow); }
+  .quoiquou-btn:active { transform: scale(.93); }
+
+  .quoiquou-reveal {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.5rem, 6vw, 3.5rem);
+    letter-spacing: 3px; color: var(--yellow);
+    text-shadow: 0 0 30px var(--yellow), 3px 3px 0 #664400;
+    margin-top: 16px; position: relative; z-index: 2;
+    display: none;
+    animation: bounceIn .5s cubic-bezier(.68,-.55,.265,1.55);
+  }
+  .quoiquou-reveal.visible { display: block; }
+
+  /* ===== CONFETTIS ===== */
+  @keyframes confettiFall {
+    0% { transform:translateY(-20px) rotate(0deg); opacity:1; }
+    100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+  }
+  .confetti-piece {
+    position:fixed; width:10px; height:10px;
+    z-index:999; pointer-events:none;
+    animation:confettiFall linear forwards;
+  }
+
+  /* ===== RESPONSIVE MOBILE ===== */
+  @media (max-width: 600px) {
+    .screen { padding: 62px 10px 20px; justify-content: flex-start; padding-top: 70px; }
+    .choices { gap: 10px; }
+    .choice-btn { padding: 12px 8px; min-width: 120px; max-width: 160px; }
+    .choice-hint { display: none; }
+    .choice-name { font-size: 1.1rem; }
+    .hud { font-size: .85rem; padding: 8px 12px; gap: 4px; }
+    .hud-score span { font-size: 1.1rem; }
+    .question-text { padding: 12px 14px; margin-bottom: 16px; font-size: clamp(1.2rem, 5vw, 2rem); }
+    .bonus-choices { grid-template-columns: 1fr; }
+    .quick-faces { gap: 12px; }
+    .quick-face-btn { padding: 10px; }
+    .quick-event-instruction { font-size: clamp(1.1rem, 4.5vw, 2rem); margin-bottom: 12px; }
+    .quick-event-title { font-size: clamp(1.5rem, 6vw, 3rem); }
+    .quick-timer { font-size: clamp(2.5rem, 10vw, 5rem); margin-bottom: 12px; }
+    .video-container { bottom: 10px; right: 8px; }
+    .video-container video { width: 110px; }
+    .fart-popup { font-size: .85rem; padding: 8px 14px; white-space: normal; text-align: center; width: 88%; bottom: 70px; }
+    .result-emoji { font-size: clamp(3rem, 12vw, 5rem); }
+    .result-title { font-size: clamp(1.8rem, 8vw, 4rem); }
+    .result-sub { font-size: .9rem; padding: 10px; }
+    .result-correct-answer { font-size: .9rem; padding: 8px 16px; }
+    .verdict-card { padding: 16px 18px; }
+    .verdict-text { font-size: clamp(1.1rem, 3.5vw, 1.6rem); }
+    .verdict-sub { font-size: .82rem; }
+    .score-display { font-size: clamp(3rem, 13vw, 6rem); }
+    .final-title { font-size: clamp(1.8rem, 8vw, 4rem); }
+    #screen-final { gap: 6px; }
+    #screen-final2 { gap: 6px; }
+    /* Quiz 2 HUD compact */
+    #screen-q2 .hud { flex-wrap: wrap; }
+    .controls-bar { top: 38px; right: 6px; gap: 5px; }
+    .ctrl-btn { width: 36px; height: 36px; font-size: 1rem; }
+    .event-warning { font-size: .7rem; padding: 3px 8px; }
+    #btnQuiz2 { padding: 13px 24px; font-size: 1.1rem; }
+    .birthday-banner { font-size: .65rem; letter-spacing: 1px; padding: 6px; }
+    /* Quick event réaction texte */
+    .quick-reaction-time { font-size: clamp(1rem, 4vw, 1.8rem); }
+  }
+
+  @media (max-width: 380px) {
+    .choice-btn img { width: 80px !important; height: 80px !important; }
+    .choice-btn { min-width: 100px; }
+    .choices { gap: 8px; }
+    .logo { font-size: clamp(2.2rem, 10vw, 4rem) !important; }
+  }
+
+  /* Hauteur écran réduite (ex: iPhone SE landscape) */
+  @media (max-height: 600px) {
+    .screen { padding-top: 55px; justify-content: flex-start; overflow-y: auto; }
+    .choice-btn img { width: 70px !important; height: 70px !important; }
+    #screen-intro .player-intro img { width: 70px !important; height: 70px !important; }
+    .result-emoji { font-size: 2.5rem; }
+    .question-text { margin-bottom: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- BIRTHDAY BANNER -->
+<div class="birthday-banner">🎂 BON ANNIVERSAIRE CLÉMENT ! 🎂 · T'ES PAS PRÊT · 🎂 BON ANNIVERSAIRE CLÉMENT ! 🎂</div>
+
+<!-- CONTROLS -->
+<div class="controls-bar">
+  <div class="event-warning" id="eventWarning">⚡ EVENT</div>
+  <button class="ctrl-btn" id="btnMusic" title="Musique ON/OFF" onclick="toggleMusic()">🎵</button>
+  <button class="ctrl-btn" id="btnSound" title="Sons ON/OFF" onclick="toggleSound()">🔊</button>
+</div>
+
+<!-- PORTAL BACKGROUND -->
+<div class="portal-bg"></div>
+<div class="particles" id="particles"></div>
+
+<!-- FLASH OVERLAY -->
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- VIDÉOS CACHÉES -->
+<div class="video-container" id="videoContainer">
+  <button class="btn-mute" onclick="toggleVideoMute()">🔇 Couper</button>
+  <video id="video1" src="154E50A0-B16B-45E8-87A5-1896695C560F.MOV" playsinline></video>
+  <video id="video2" src="5384C0BF-52A8-4E92-AC97-55781BD8FA99.MOV" playsinline></video>
+  <!-- Les vidéos de victoire sont gérées dynamiquement -->
+</div>
+
+<!-- LOSER RAIN -->
+<div class="loser-rain" id="loserRain"></div>
+
+<!-- ===== QUESTION SECRÈTE QUOIQUOULORENCEEE ===== -->
+<div class="quoiquou-overlay" id="quoiquouOverlay">
+  <div class="quoiquou-classified">⚠️ FICHIER CLASSIFIÉ ⚠️</div>
+  <div class="quoiquou-title">QUOIQUOULORENCEEE</div>
+  <div class="quoiquou-sub" id="quoiquouSub">
+    Une question mystérieuse surgit des profondeurs du portail...<br>
+    <strong>Qui est le plus QUOIQUOULORENCEEE ?</strong>
+  </div>
+  <div class="quoiquou-choices" id="quoiquouChoices"></div>
+  <div class="quoiquou-reveal" id="quoiquouReveal">
+    🌀 LES DEUX SONT DES QUOIQUOULORENCEEE 🌀<br>
+    <span style="font-size:.5em;color:#aaa;font-family:'Roboto',sans-serif;letter-spacing:1px">
+      Ce message s'autodétruira dans 5 secondes
+    </span>
+  </div>
+</div>
+
+<!-- ===== QUICK CLICK EVENT ===== -->
+<div class="quick-event-overlay" id="quickEventOverlay">
+  <div class="quick-event-title">⚡ ALERTE PORTAIL ⚡</div>
+  <div class="quick-event-instruction">
+    CLIQUE SUR LA TÊTE DE <span class="target-name" id="quickTargetName">???</span><br>LE PLUS VITE POSSIBLE !
+  </div>
+  <div class="quick-timer" id="quickTimer">PRÊT...</div>
+  <div class="quick-faces" id="quickFaces"></div>
+  <div class="quick-reaction-time" id="quickReactionTime"></div>
+</div>
+
+<!-- ================================= -->
+<!-- ÉCRAN INTRO -->
+<!-- ================================= -->
+<div class="screen active" id="screen-intro">
+  <div class="logo">CLÉMENT<br><span>VS</span><br>JERRY</div>
+  <div class="subtitle">Le Jugement Dernier de l'Univers™</div>
+
+  <div class="jerry-intro">
+    <div class="player-intro">
+      <img src="IMG_2182.PNG" alt="Clément">
+      <div class="player-name" style="color:var(--red)">CLÉMENT</div>
+      <div style="font-size:.7rem;color:#555">Homo sapiens douteux</div>
+    </div>
+    <div class="vs-text">VS</div>
+    <div class="player-intro">
+      <img src="IMG_2183.PNG" alt="Jerry" style="background:#fff;padding:4px;object-fit:contain;">
+      <div class="player-name" style="color:var(--green)">JERRY</div>
+      <div style="font-size:.7rem;color:#555">Loser intergalactique</div>
+    </div>
+  </div>
+
+  <div class="warning">
+    ⚠️ Ce site contient des vérités difficiles.<br>
+    Si t'es froussard : ferme le browser maintenant.<br>
+    <em style="color:#ff6666">(On sait que tu vas quand même cliquer.)</em>
+  </div>
+
+  <button class="btn-start" onclick="startGame()">
+    COMMENCER<br><span style="font-size:.65em;color:rgba(0,0,0,.6)">(si t'as les couilles)</span>
+  </button>
+
+  <div style="margin-top:16px;color:#2a2a2a;font-size:.75rem;">
+    10 questions · Bonus GOAT · Événements surprises · Résultats brutaux
+  </div>
+</div>
+
+<!-- ================================= -->
+<!-- ÉCRAN QUESTION -->
+<!-- ================================= -->
+<div class="screen" id="screen-question">
+  <div class="hud">
+    <div class="hud-score">SCORE : <span id="scoreDisplay">0</span></div>
+    <div class="streak" id="streakDisplay">🔥 STREAK</div>
+    <div class="hud-qnum">Q <span id="qNum">1</span>/10</div>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="question-text" id="questionText">
+    <span class="emoji-q" id="questionEmoji">🤔</span>
+    <span id="questionContent">...</span>
+  </div>
+  <div class="choices">
+    <div class="choice-btn" id="btnClement" onclick="handleAnswer('clement')">
+      <img src="IMG_2182.PNG" alt="Clément">
+      <div class="choice-name" style="color:#ff6688">CLÉMENT</div>
+      <div class="choice-hint">← Clique ici</div>
+    </div>
+    <div class="choice-btn" id="btnJerry" onclick="handleAnswer('jerry')">
+      <img src="IMG_2183.PNG" alt="Jerry" style="background:#fff;padding:4px;object-fit:contain;">
+      <div class="choice-name" style="color:var(--green)">JERRY</div>
+      <div class="choice-hint">Clique ici →</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================= -->
+<!-- ÉCRAN RÉSULTAT -->
+<!-- ================================= -->
+<div class="screen" id="screen-result">
+  <div class="result-emoji" id="resultEmoji">💀</div>
+  <div class="result-title" id="resultTitle">MAUVAISE RÉPONSE</div>
+  <div class="result-sub" id="resultSub">.</div>
+  <div class="result-correct-answer" id="resultCorrectAnswer">...</div>
+  <button class="btn-next" id="btnNext" onclick="nextQuestion()">SUIVANT →</button>
+</div>
+
+<!-- ================================= -->
+<!-- ÉCRAN QUIZ 2 QUESTION -->
+<!-- ================================= -->
+<div class="screen" id="screen-q2">
+  <div class="hud" style="border-color:rgba(255,0,136,.3);background:rgba(255,0,136,.07);">
+    <div class="hud-score" style="color:#ff0088">SCORE Q2 : <span id="scoreDisplay2">0</span></div>
+    <div class="streak" id="streakDisplay2">🔥 STREAK</div>
+    <div class="hud-qnum" style="color:#ff88bb">Q <span id="qNum2">1</span>/10</div>
+  </div>
+  <div class="progress-bar-container">
+    <div class="progress-bar-fill" id="progressBar2" style="width:0%;background:linear-gradient(90deg,#ff0088,#ff6600)"></div>
+  </div>
+  <div style="font-family:'Bangers',cursive;font-size:clamp(.75rem,2.5vw,1rem);letter-spacing:3px;color:#ff0088;margin-bottom:10px;text-shadow:0 0 10px #ff0088">
+    ⚠️ NIVEAU 2 — INTERDIT AUX ÂMES SENSIBLES ⚠️
+  </div>
+  <div class="question-text" id="questionText2" style="border-color:rgba(255,0,136,.25)">
+    <span class="emoji-q" id="questionEmoji2">🤔</span>
+    <span id="questionContent2">...</span>
+  </div>
+  <div class="choices">
+    <div class="choice-btn" id="btnClement2" onclick="handleAnswer2('clement')" style="border-color:rgba(255,102,136,.3)">
+      <img src="IMG_2182.PNG" alt="Clément">
+      <div class="choice-name" style="color:#ff6688">CLÉMENT</div>
+      <div class="choice-hint">← Clique ici</div>
+    </div>
+    <div class="choice-btn" id="btnLucas" onclick="handleAnswer2('lucas')" style="border-color:rgba(255,170,0,.3)">
+      <img src="Subject.png" alt="Lucas" id="imgLucas">
+      <div class="choice-name" style="color:#ffaa00">LUCAS</div>
+      <div class="choice-hint">Clique ici →</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================= -->
+<!-- ÉCRAN RÉSULTAT Q2 (réutilise screen-result, géré par activeQuiz) -->
+<!-- ================================= -->
+
+<!-- ================================= -->
+<!-- RÉSULTATS FINAUX QUIZ 2 -->
+<!-- ================================= -->
+<div class="screen" id="screen-final2">
+  <div class="final-title" style="color:#ff0088;text-shadow:0 0 30px #ff0088,4px 4px 0 #440022">VERDICT QUIZ 2</div>
+  <div style="font-family:'Bangers',cursive;font-size:clamp(.9rem,2.5vw,1.1rem);letter-spacing:3px;color:#ff0088;margin-bottom:8px;opacity:.7">
+    ⚠️ CONTENU CLASSIFIÉ ⚠️
+  </div>
+  <div class="score-display" id="finalScore2" style="color:#ff6600;text-shadow:0 0 40px #ff6600,4px 4px 0 #662200">0</div>
+  <div class="score-label">points sur 10</div>
+  <div class="verdict-card" id="verdictCard2" style="border-color:#ff0088">
+    <div class="verdict-icon" id="verdictIcon2">🤡</div>
+    <div class="verdict-text" id="verdictText2">RÉSULTAT</div>
+    <div class="verdict-sub" id="verdictSub2">...</div>
+  </div>
+  <div style="color:#3a3a3a;font-size:.7rem;margin-bottom:16px;max-width:380px;font-style:italic;">
+    Ce quiz n'a jamais existé. Lucas ne sait pas. Personne ne sait.
+  </div>
+  <button class="btn-replay" onclick="resetGame()" style="background:linear-gradient(135deg,#ff0088,#cc0055)">
+    RETOUR À L'ACCUEIL<br><span style="font-size:.6em;opacity:.7">(et on efface tout)</span>
+  </button>
+</div>
+
+<!-- ================================= -->
+<!-- BONUS GOAT -->
+<!-- ================================= -->
+<div class="screen" id="screen-bonus">
+  <div class="bonus-title">🐐 QUESTION BONUS 🐐</div>
+  <div class="bonus-subtitle">Prouve que t'es le GOAT de Rick & Morty</div>
+  <div class="bonus-question" id="bonusQuestionText">...</div>
+  <div class="bonus-choices" id="bonusChoices"></div>
+</div>
+
+<!-- ================================= -->
+<!-- RÉSULTATS FINAUX -->
+<!-- ================================= -->
+<div class="screen" id="screen-final">
+  <div class="final-title">VERDICT FINAL</div>
+  <div class="score-display" id="finalScore">0</div>
+  <div class="score-label">points sur <span id="totalPossible">10</span></div>
+  <div class="verdict-card" id="verdictCard">
+    <div class="verdict-icon" id="verdictIcon">🤡</div>
+    <div class="verdict-text" id="verdictText">T'ES JERRY</div>
+    <div class="verdict-sub" id="verdictSub">Et pas le Jerry sympa.</div>
+  </div>
+  <div style="color:#3a3a3a;font-size:.75rem;margin-bottom:16px;max-width:380px;font-style:italic;">
+    "Nobody exists on purpose, nobody belongs anywhere, everybody's gonna die." — Rick Sanchez
+  </div>
+
+  <!-- BOUTON QUIZ 2 -->
+  <button id="btnQuiz2" onclick="startQuiz2()" style="display:none;flex-direction:column;align-items:center;font-family:'Bangers',cursive;font-size:clamp(1.2rem,3.5vw,1.6rem);letter-spacing:2px;background:linear-gradient(135deg,#ff0088,#cc0066);color:#fff;border:none;padding:16px 35px;border-radius:50px;cursor:pointer;box-shadow:0 0 30px rgba(255,0,136,.6),0 0 60px rgba(255,0,136,.3);margin-bottom:14px;animation:btnPulse2 1.5s ease-in-out infinite;touch-action:manipulation;">
+    🔓 QUIZ 2 DÉBLOQUÉ<br>
+    <span style="font-size:.65em;opacity:.85">CLÉMENT VS LUCAS — NIVEAU INTERDIT</span><br>
+    <span style="font-size:.5em;opacity:.6;font-family:'Roboto',sans-serif;font-weight:400;letter-spacing:1px">⚠️ Contenu ultra-borderline. T'es prévenu.</span>
+  </button>
+  <div id="quiz2Lock" style="display:none;color:#333;font-size:.8rem;margin-bottom:14px;padding:10px 20px;border:1px solid #222;border-radius:20px;">
+    🔒 QUIZ 2 BLOQUÉ — Fais 6/10 minimum pour débloquer<br>
+    <span style="font-size:.75em;color:#222">Clément vs Lucas · Niveau interdit</span>
+  </div>
+
+  <button class="btn-replay" onclick="resetGame()">
+    REJOUER<br><span style="font-size:.6em;opacity:.7">(t'as vraiment besoin)</span>
+  </button>
+</div>
+
+<!-- ================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================= -->
+<script>
+// ============================================================
+//  CONFIG — AJOUTE TES VIDÉOS DE VICTOIRE ICI
+//  (mets les fichiers dans le même dossier que index.html)
+// ============================================================
+const WIN_VIDEOS = [
+  'IMG_2184.MOV',
+  'IMG_2185.MOV',
+  'IMG_2188.MOV',
+];
+
+const LOSE_VIDEOS = [
+  '154E50A0-B16B-45E8-87A5-1896695C560F.MOV',
+  '5384C0BF-52A8-4E92-AC97-55781BD8FA99.MOV',
+];
+
+// ============================================================
+//  DONNÉES — QUESTIONS
+// ============================================================
+const QUESTIONS = [
+  {
+    emoji:'🧠', text:'Qui a le plus gros cerveau ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Clément a un cerveau de la taille d\'une crevette bouillie.','NÉGATIF ! La science a tranché. C\'est pitoyable.','RATÉ ! Le médecin a demandé une 2ème radio tellement c\'était petit.'],
+    rightMsgs:['Jerry a UNE FOIS eu une idée. Clément... on cherche encore.','Jerry s\'est habillé seul ce matin. La barre est haute.'],
+    explanation:'Jerry a une fois eu une idée brillante. Clément... on attend toujours.'
+  },
+  {
+    emoji:'🚢', text:'Qui pleure le plus en regardant Titanic ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Jerry est OBSÉDÉ par Titanic dans la série, c\'est CANON !','INCORRECT ! Jerry cite Titanic à chaque dîner de famille dans R&M.','MAUVAISE RÉPONSE ! Jerry se bat pour que Pluto reste une planète ET que Titanic reste le meilleur film.'],
+    rightMsgs:['Jerry pleure même pendant la bande-annonce. Clément pleure seulement quand il perd à FIFA.','Jerry : 47 larmes. Clément : 0. (Mais Clément pleure intérieurement.)'],
+    explanation:'Jerry est OBSÉDÉ par Titanic — c\'est canon dans R&M. Il en parle à chaque repas.'
+  },
+  {
+    emoji:'👩', text:'Qui a la plus belle mère ?', correct:'clement',
+    wrongMsgs:['FAUX ! Beth Smith est chirurgienne VÉTÉRINAIRE. Elle opère des chevaux. Des CHEVAUX.','ERREUR ! La mère de Jerry répare des animaux pour vivre. Réfléchis.','MAUVAIS ! Beth a essayé de quitter la Terre plusieurs fois. Ça dit tout.'],
+    rightMsgs:['On te donnera pas les détails mais... voilà.','Sa mère n\'a jamais tenté de fuir sur une autre planète au moins.'],
+    explanation:'Beth Smith est chirurgienne vétérinaire. Elle opère des chevaux. Des CHEVAUX.'
+  },
+  {
+    emoji:'🏆', text:'Qui est le plus grand LOSER ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Jerry a VENDU ses propres enfants à une extra-terrestre pour éviter une rupture.','ERREUR ! Jerry : son humiliation sert de monnaie en Enfer. Littéralement.','NON ! Jerry travaillait comme agent de propagande galactique. Il avait le choix.'],
+    rightMsgs:['Jerry vend ses enfants à une ET plutôt que d\'avoir une conversation difficile. Champion.','Son humiliation est une devise officielle en Enfer dans R&M S6. Légende.'],
+    explanation:'Jerry a vendu ses enfants à une extraterrestre pour éviter une rupture. Son humiliation est une monnaie officielle en Enfer.'
+  },
+  {
+    emoji:'👃', text:'Qui sent le plus des pieds ?', correct:'clement',
+    wrongMsgs:['FAUX ! L\'enquête indépendante est formelle. Les témoins ont témoigné sous serment.','INCORRECT ! On a des preuves olfactives. Les témoins demandent l\'anonymat.','NON ! Jerry Smith n\'a jamais fait fuir une pièce entière avec ses chaussures.'],
+    rightMsgs:['Oui... on préférait ne pas avoir à confirmer ça mais...','Correct. Les témoins ont demandé la protection. On les comprend.'],
+    explanation:'L\'enquête est formelle. Les témoins ont témoigné sous protection. On n\'en dira pas plus.'
+  },
+  {
+    emoji:'🍆', text:'Qui a le plus gros... <em style="color:var(--yellow)">cerveau reptilien</em> ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Jerry a fait 2 enfants. Les maths parlent.','INCORRECT ! Une extraterrestre l\'a kidnappé SPÉCIFIQUEMENT pour son corps. Respect.','ERREUR ! Jerry a attiré une groupie alien. C\'est pas rien.'],
+    rightMsgs:['Deux enfants. Les maths sont implacables.','Jerry gagne ce round sans discussion possible.'],
+    explanation:'Jerry a fait 2 enfants ET s\'est fait kidnapper par une extraterrestre pour son corps.'
+  },
+  {
+    emoji:'🦁', text:'Qui est le plus courageux ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Jerry s\'est battu contre un ver extraterrestre. Pas gagné, mais il a essayé.','INCORRECT ! Jerry a affronté un alien dans un couloir. C\'était nul mais courageux.','MAUVAIS ! Jerry a au moins TENTÉ quelque chose. Clément ?'],
+    rightMsgs:['Jerry a essayé de combattre un ver alien. Il a perdu. Mais il a essayé.','Correct ! Jerry : 1 tentative de bravoure. Clément : 0.'],
+    explanation:'Jerry s\'est battu contre un ver extraterrestre. Il a perdu. Mais il a essayé. Clément... on vérifie.'
+  },
+  {
+    emoji:'💘', text:'Qui a le plus de succès avec les filles ?', correct:'jerry',
+    wrongMsgs:['FAUX ! Jerry a été kidnappé par une extraterrestre obsédée par lui. C\'est du succès ça.','INCORRECT ! Jerry a MARIÉ une chirurgienne. Clément lui...','MAUVAIS ! Une alien l\'a forcé à rejouer Titanic avec elle. Du succès au 2ème degré.'],
+    rightMsgs:['Marié à une chirurgienne + kidnappé par une alien amoureuse. Double combo.','Jerry : marié + kidnapping romantique alien. Clément : ?'],
+    explanation:'Jerry a épousé une chirurgienne ET s\'est fait kidnapper par une extraterrestre qui le voulait pour elle.'
+  },
+  {
+    emoji:'🪞', text:'Qui ressemble le plus à son père ?', correct:'clement',
+    wrongMsgs:['FAUX ! On va pas trop rentrer dans les détails mais... regarde dans un miroir Clément.','INCORRECT ! C\'est Clément. On préfère ne pas expliquer pourquoi.','NON ! La ressemblance est flagrante côté Clément. Les photos de famille parlent.'],
+    rightMsgs:['On va pas développer. C\'est Clément. Point.','Correct... et on s\'arrête là pour la dignité de tout le monde.'],
+    explanation:'On va pas trop détailler. Juste : regarde des photos de famille, Clément.'
+  },
+  {
+    emoji:'🍺', text:'Qui est le plus drôle quand il est bourré ?', correct:'clement',
+    wrongMsgs:['FAUX ! Jerry bourré c\'est juste Jerry normal. Aucune différence observable.','INCORRECT ! L\'alcool n\'améliore pas Jerry. Les scientifiques confirment.','MAUVAIS ! Jerry à jeun et Jerry saoul : deux états indiscernables scientifiquement.'],
+    rightMsgs:['Jerry saoul c\'est Jerry normal avec un retard supplémentaire.','Clément au moins devient intéressant. Jerry... non.'],
+    explanation:'Jerry bourré c\'est Jerry normal. Aucune différence mesurable. Clément lui au moins devient drôle.'
+  }
+];
+
+const BONUS_QUESTION = {
+  text:'Pour prouver que t\'es le GOAT : Dans quelle saison Jerry fait-il accidentellement mourir un alien nommé Gobo en l\'oubliant dans le coffre de sa voiture ?',
+  choices:[
+    {text:'A) Saison 2 — "Auto Erotic Assimilation"', correct:false},
+    {text:'B) Saison 3 — Il a jamais fait ça', correct:false},
+    {text:'C) Saison 7 — Jerry oublie Gobo dans son coffre', correct:true},
+    {text:'D) Ça s\'est jamais passé, tu confonds', correct:false}
+  ],
+  wrongSub:'Même sur Jerry t\'es nul. Saison 7. Rewatch la série.',
+  rightSub:'WUBBA LUBBA DUB DUB ! T\'es peut-être le GOAT... ou t\'as Googled. On te surveille.'
+};
+
+// ============================================================
+//  DONNÉES — QUIZ 2 (CLÉMENT VS LUCAS) — ACCÈS RESTREINT
+// ============================================================
+const QUESTIONS_2 = [
+  {
+    emoji:'☠️', text:'Qui est le plus raciste ?', correct:'clement',
+    wrongMsgs:[
+      'FAUX ! Ralarabdoul le bougnoul... c\'était une idée de qui déjà ?',
+      'INCORRECT ! On a les témoignages. Les preuves. Et un surnom.',
+      'MAUVAIS ! "Ralarabdoul le bougnoul" — citation directe. Source : la bouche de Clément.'
+    ],
+    rightMsgs:[
+      'Ah... on attendait que quelqu\'un ose le dire.',
+      'Ralarabdoul le bougnoul dit bonjour.'
+    ],
+    explanation:'Ralarabdoul le bougnoul. C\'est tout ce qu\'on va dire. Les témoins sont nombreux.'
+  },
+  {
+    emoji:'🍆', text:'Qui a le plus gros zgueg ?', correct:'lucas',
+    wrongMsgs:[
+      'FAUX ! La spanish girl a confirmé. On a des témoins.',
+      'INCORRECT ! Lucas a des preuves photographiques. Enfin... on suppose.',
+      'MAUVAIS ! Les rumeurs circulent. Toutes dans le même sens. Vers Lucas.'
+    ],
+    rightMsgs:[
+      'Correct. La spanish girl ne ment pas.',
+      'Lucas gagne ce round. Sans discussion.'
+    ],
+    explanation:'La spanish girl a témoigné. L\'électricien aussi. Les deux ne se connaissent pas. Convergence troublante.'
+  },
+  {
+    emoji:'🍑', text:'Qui mange le plus de cul ?', correct:'clement',
+    wrongMsgs:[
+      'FAUX ! L\'enquête est sans appel. Les témoins ont témoigné sous protection.',
+      'INCORRECT ! Clément a un régime alimentaire très... diversifié.',
+      'MAUVAIS ! "Ah bon ?" — Lucas. "Oui bon." — tout le monde.'
+    ],
+    rightMsgs:[
+      'Oui. On préférait ne pas avoir à le confirmer.',
+      'L\'appétit de Clément est légendaire. Dans tous les sens du terme.'
+    ],
+    explanation:'L\'enquête indépendante est formelle. Le régime alimentaire de Clément est... complet.'
+  },
+  {
+    emoji:'🐕', text:'Qui court le plus vite pour aller manger du chien ?', correct:'lucas',
+    wrongMsgs:[
+      'FAUX ! Lucas a battu le record du quartier sur ce coup-là.',
+      'INCORRECT ! Il a lâché ses chaussures en courant. À BIMBO.',
+      'MAUVAIS ! La vitesse de Lucas sur ce trajet précis est scientifiquement inexplicable.'
+    ],
+    rightMsgs:[
+      'Lucas détient le record. Personne le bat sur cette distance.',
+      'La motivation crée des athlètes. Voilà la preuve.'
+    ],
+    explanation:'Lucas a battu son record perso sur ce trajet précis. La motivation fait des miracles.'
+  },
+  {
+    emoji:'🤨', text:'Qui dit "AH BON ?" le plus souvent dans une conversation ?', correct:'lucas',
+    wrongMsgs:[
+      'FAUX ! Lucas detient le record mondial de "Ah bon ?" par heure.',
+      'INCORRECT ! Ah bon ? AH BON ?! ah... bon.',
+      'MAUVAIS ! Chaque phrase mérite un "Ah bon ?" de Lucas. C\'est une loi naturelle.'
+    ],
+    rightMsgs:[
+      'Ah bon ? Eh ben oui.',
+      'Exact. Ah bon. C\'est Lucas. Ah bon.'
+    ],
+    explanation:'"Ah bon ?" — Lucas, 47 fois par jour en moyenne. Les chercheurs s\'y intéressent.'
+  },
+  {
+    emoji:'🇪🇸', text:'Qui a les meilleures skills avec la spanish girl ?', correct:'clement',
+    wrongMsgs:[
+      'FAUX ! Clément parle couramment l\'espagnol de nuit. C\'est connu.',
+      'INCORRECT ! La spanish girl a demandé spécifiquement Clément. Deux fois.',
+      'MAUVAIS ! Y\'a des témoins. Y\'a des preuves. Y\'a même une vidéo paraît-il.'
+    ],
+    rightMsgs:[
+      'Clément. La spanish girl. Une histoire belle et troublante.',
+      'Les compétences de Clément dans ce domaine sont... internationally recognized.'
+    ],
+    explanation:'La spanish girl a confirmé les skills de Clément. En espagnol. Deux fois. Avec gestes.'
+  },
+  {
+    emoji:'🔌', text:'Qui appelle l\'électricien pour changer une ampoule ?', correct:'lucas',
+    wrongMsgs:[
+      'FAUX ! Lucas a appelé l\'électricien. Pour une ampoule. Un jeudi.',
+      'INCORRECT ! "L\'électricien c\'est pas pour rien" — Lucas, avant d\'appeler l\'électricien pour rien.',
+      'MAUVAIS ! L\'électricien connaît le numéro de Lucas par cœur maintenant.'
+    ],
+    rightMsgs:[
+      'Lucas : 1 ampoule grillée. 1 électricien appelé. La logique de Lucas.',
+      'L\'électricien a une ligne dédiée pour Lucas. C\'est plus pratique.'
+    ],
+    explanation:'Lucas a appelé l\'électricien pour changer une ampoule. L\'électricien a pleuré en rentrant chez lui.'
+  },
+  {
+    emoji:'💊', text:'Qui prend le plus de Maxi-Paxi-Dafalgan ?', correct:'clement',
+    wrongMsgs:[
+      'FAUX ! Clément a une relation personnelle avec le Maxi-Paxi-Dafalgan.',
+      'INCORRECT ! La pharmacie a un stock dédié sous son nom.',
+      'MAUVAIS ! Maxi-Paxi-Dafalgan — dose thérapeutique × 3. Chaque semaine. Clément.'
+    ],
+    rightMsgs:[
+      'Exact. Clément est au Maxi-Paxi-Dafalgan comme d\'autres sont au café.',
+      'La pharmacie lui fait une carte de fidélité. C\'est mérité.'
+    ],
+    explanation:'Maxi-Paxi-Dafalgan — dose thérapeutique dépassée depuis 2019. Le médecin a arrêté de poser des questions.'
+  },
+  {
+    emoji:'😑', text:'Qui dit "SALUUUT..." le plus mollement ?', correct:'lucas',
+    wrongMsgs:[
+      'FAUX ! Le "Saluuut..." de Lucas a l\'énergie d\'une plante verte un lundi matin.',
+      'INCORRECT ! Lucas dit "Saluuut..." avec l\'enthousiasme de quelqu\'un qui déclare ses impôts.',
+      'MAUVAIS ! Enregistrement audio de Lucas : "Saluuut..." Durée de la syllabe : 4 secondes. Énergie dégagée : nulle.'
+    ],
+    rightMsgs:[
+      'Lucas. "Saluuut..." Intonation d\'une plante en pot.',
+      'Correct. Le "Saluuut..." de Lucas est classé patrimoine de la mollesse nationale.'
+    ],
+    explanation:'"Saluuut..." — Lucas, avec l\'énergie d\'un Jerry un lundi matin sous la pluie sans café.'
+  },
+  {
+    emoji:'🦵', text:'Qui a les cramptes les plus souvent ?', correct:'clement',
+    wrongMsgs:[
+      'FAUX ! TA LES CRAMPTÉ ?! OUI CLÉMENT A LES CRAMPTÉ.',
+      'INCORRECT ! Les cramptes de Clément sont légendaires dans le groupe.',
+      'MAUVAIS ! "Ta les crampté ?" est devenu une salutation standard dans la bande.'
+    ],
+    rightMsgs:[
+      'Clément. Les cramptes. C\'est une relation exclusive et durable.',
+      '"TA LES CRAMPTÉ ?" — la question qu\'on pose à Clément avant de le voir.'
+    ],
+    explanation:'"TA LES CRAMPTÉ ?!" — Clément, chaque semaine, depuis que le groupe le connaît.'
+  }
+];
+
+// ============================================================
+//  AUDIO ENGINE
+// ============================================================
+let audioCtx = null;
+let musicPlaying = false;
+let soundEnabled = true;
+let musicEnabled = true;
+let bgMusicGain = null;
+let bgMusicNodes = [];
+let musicScheduled = false;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// --- Background Music (Web Audio synth) ---
+// Mélodie inspirée Rick & Morty vibes (G maj funky sci-fi)
+const BPM = 128;
+const BEAT = 60 / BPM;
+
+const N = { // fréquences notes
+  C3:130.81, D3:146.83, Eb3:155.56, E3:164.81, F3:174.61, G3:196, Ab3:207.65, A3:220, Bb3:233.08, B3:246.94,
+  C4:261.63, D4:293.66, Eb4:311.13, E4:329.63, F4:349.23, G4:392, Ab4:415.30, A4:440, Bb4:466.16, B4:493.88,
+  C5:523.25, D5:587.33, E5:659.25, G5:783.99,
+  R:0
+};
+
+// Mélodie principale (8 mesures × 4 temps)
+const MELODY = [
+  // Bar 1 — funky riff
+  [N.G4,.25],[N.G4,.25],[N.R,.25],[N.A4,.25],
+  [N.G4,.5],[N.R,.25],[N.E4,.25],
+  // Bar 2
+  [N.D4,.25],[N.E4,.25],[N.G4,.5],
+  [N.A4,.25],[N.G4,.25],[N.E4,.5],
+  // Bar 3
+  [N.G4,.25],[N.R,.25],[N.G4,.25],[N.G4,.25],
+  [N.Bb4,.5],[N.A4,.5],
+  // Bar 4
+  [N.G4,.25],[N.F4,.25],[N.E4,.5],
+  [N.D4,.5],[N.R,.5],
+  // Bar 5 — reprise avec variation
+  [N.C5,.25],[N.B4,.25],[N.A4,.5],
+  [N.G4,.25],[N.R,.25],[N.A4,.5],
+  // Bar 6
+  [N.G4,.25],[N.E4,.25],[N.D4,.5],
+  [N.G3,.5],[N.A3,.5],
+  // Bar 7
+  [N.B3,.25],[N.C4,.25],[N.D4,.5],
+  [N.E4,.25],[N.G4,.25],[N.A4,.5],
+  // Bar 8
+  [N.G4,.5],[N.E4,.25],[N.D4,.25],
+  [N.C4,1.0]
+];
+
+// Ligne de basse
+const BASS = [
+  [N.G3,.5],[N.R,.5],[N.G3,.5],[N.R,.5],
+  [N.D3,.5],[N.R,.5],[N.E3,.5],[N.R,.5],
+  [N.C3,.5],[N.R,.5],[N.G3,.5],[N.R,.5],
+  [N.D3,.5],[N.R,.5],[N.G3,1.0],
+  [N.G3,.5],[N.R,.5],[N.G3,.5],[N.R,.5],
+  [N.C3,.5],[N.R,.5],[N.D3,.5],[N.R,.5],
+  [N.E3,.5],[N.R,.5],[N.A3,.5],[N.R,.5],
+  [N.G3,.5],[N.D3,.5],[N.G3,1.0]
+];
+
+function scheduleNote(ctx, freq, startTime, duration, gainNode, type='square', detune=0) {
+  if (freq === 0) return;
+  const osc = ctx.createOscillator();
+  const envGain = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  osc.detune.value = detune;
+  osc.connect(envGain);
+  envGain.connect(gainNode);
+  const attack = 0.02;
+  const release = Math.min(0.08, duration * 0.4);
+  envGain.gain.setValueAtTime(0, startTime);
+  envGain.gain.linearRampToValueAtTime(1, startTime + attack);
+  envGain.gain.setValueAtTime(1, startTime + duration - release);
+  envGain.gain.linearRampToValueAtTime(0, startTime + duration);
+  osc.start(startTime);
+  osc.stop(startTime + duration + 0.01);
+  return osc;
+}
+
+function playMusicLoop() {
+  if (!musicEnabled || !musicPlaying) return;
+  const ctx = getAudioCtx();
+  if (!bgMusicGain) {
+    bgMusicGain = ctx.createGain();
+    bgMusicGain.gain.value = 0.035;
+    // Compression douce
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -20;
+    comp.knee.value = 10;
+    comp.ratio.value = 4;
+    bgMusicGain.connect(comp);
+    comp.connect(ctx.destination);
+  }
+
+  const now = ctx.currentTime + 0.05;
+  let t = now;
+
+  // Calculer durée totale boucle
+  const totalDur = MELODY.reduce((s,[,d]) => s + d * BEAT, 0);
+
+  // Jouer mélodie
+  const melGain = ctx.createGain();
+  melGain.gain.value = 0.5;
+  melGain.connect(bgMusicGain);
+  let mt = now;
+  for (const [freq, beats] of MELODY) {
+    const dur = beats * BEAT;
+    scheduleNote(ctx, freq, mt, dur * 0.85, melGain, 'sawtooth', -12);
+    mt += dur;
+  }
+
+  // Jouer basse
+  const bassGain = ctx.createGain();
+  bassGain.gain.value = 0.6;
+  bassGain.connect(bgMusicGain);
+  let bt = now;
+  for (const [freq, beats] of BASS) {
+    const dur = beats * BEAT;
+    scheduleNote(ctx, freq, bt, dur * 0.7, bassGain, 'triangle', 0);
+    bt += dur;
+  }
+
+  // Percussion simple (kick sur les temps)
+  const percGain = ctx.createGain();
+  percGain.gain.value = 0.35;
+  percGain.connect(bgMusicGain);
+  const bars = 8;
+  const beatsPerBar = 4;
+  const totalBeats = bars * beatsPerBar;
+  for (let i = 0; i < totalBeats; i++) {
+    const beatTime = now + i * BEAT;
+    // Kick sur 1 et 3
+    if (i % 4 === 0 || i % 4 === 2) {
+      const buf = ctx.createBuffer(1, ctx.sampleRate * 0.15, ctx.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let j = 0; j < d.length; j++) {
+        const t2 = j / ctx.sampleRate;
+        d[j] = Math.sin(2*Math.PI*(80-60*t2)*t2) * Math.exp(-t2*30) * (1-Math.exp(-t2*200));
+      }
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(percGain);
+      src.start(beatTime);
+    }
+    // Hi-hat sur chaque temps
+    const hbuf = ctx.createBuffer(1, ctx.sampleRate * 0.05, ctx.sampleRate);
+    const hd = hbuf.getChannelData(0);
+    for (let j = 0; j < hd.length; j++) {
+      hd[j] = (Math.random()*2-1) * Math.exp(-j/hbuf.length*8);
+    }
+    const hfilt = ctx.createBiquadFilter();
+    hfilt.type = 'highpass';
+    hfilt.frequency.value = 8000;
+    const hsrc = ctx.createBufferSource();
+    hsrc.buffer = hbuf;
+    const hgain = ctx.createGain();
+    hgain.gain.value = 0.15;
+    hsrc.connect(hfilt);
+    hfilt.connect(hgain);
+    hgain.connect(percGain);
+    hsrc.start(beatTime + BEAT/2);
+  }
+
+  // Relancer la boucle
+  setTimeout(() => {
+    if (musicPlaying && musicEnabled) playMusicLoop();
+  }, (totalDur - 0.1) * 1000);
+}
+
+function startMusic() {
+  if (musicPlaying) return;
+  musicPlaying = true;
+  getAudioCtx();
+  playMusicLoop();
+}
+
+function stopMusic() {
+  musicPlaying = false;
+  if (bgMusicGain) {
+    try {
+      bgMusicGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+    } catch(e) {}
+    setTimeout(() => { bgMusicGain = null; }, 400);
+  }
+}
+
+function toggleMusic() {
+  musicEnabled = !musicEnabled;
+  const btn = document.getElementById('btnMusic');
+  btn.classList.toggle('muted', !musicEnabled);
+  btn.textContent = musicEnabled ? '🎵' : '🔇';
+  if (musicEnabled) { startMusic(); }
+  else { stopMusic(); }
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('btnSound');
+  btn.classList.toggle('muted', !soundEnabled);
+  btn.textContent = soundEnabled ? '🔊' : '🔕';
+  if (!soundEnabled) stopAllVideos();
+}
+
+// --- Fart Sound Synth (LOUD & PROPER) ---
+function playFartSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const sr = ctx.sampleRate;
+    const duration = 0.4 + Math.random() * 0.55;
+    const bufSize = Math.floor(sr * duration);
+    const buffer = ctx.createBuffer(1, bufSize, sr);
+    const data = buffer.getChannelData(0);
+
+    // Paramètres variés pour chaque pet
+    const baseFreq  = 45 + Math.random() * 35;   // 45–80 Hz, très basse
+    const endFreq   = 18 + Math.random() * 20;    // descend jusqu'à 18–38 Hz
+    const wobbleSpd = 8  + Math.random() * 12;
+    const wobbleAmt = 0.25 + Math.random() * 0.35;
+    const noiseAmt  = 0.3 + Math.random() * 0.25;
+
+    for (let i = 0; i < bufSize; i++) {
+      const t  = i / sr;
+      const p  = t / duration;
+      // Enveloppe : attaque rapide, descente progressive
+      const env = (1 - Math.pow(p, 1.2)) * (1 - Math.exp(-t * 120));
+      // Pitch sweep descendant avec wobble
+      const freq = baseFreq - (baseFreq - endFreq) * p;
+      const phase = 2 * Math.PI * freq * t * (1 + wobbleAmt * Math.sin(wobbleSpd * t));
+      const tone  = Math.sin(phase) * 0.6
+                  + Math.sin(phase * 2.1) * 0.25    // harmonique
+                  + Math.sin(phase * 3.3) * 0.10;   // harmonique 2
+      const noise = (Math.random() * 2 - 1) * noiseAmt;
+      data[i] = env * (tone + noise);
+    }
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    // Filtre passe-bas pour couper le sifflement inutile, laisser les basses
+    const lpf = ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 280 + Math.random() * 180;
+    lpf.Q.value = 1.5;
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 3.5;   // FORT
+
+    src.connect(lpf);
+    lpf.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    src.start();
+  } catch(e) { console.log('Fart error:', e); }
+}
+
+// --- Burp (Rot) Sound Synth ---
+function playBurpSound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const sr = ctx.sampleRate;
+    const duration = 0.3 + Math.random() * 0.45;
+    const bufSize = Math.floor(sr * duration);
+    const buffer = ctx.createBuffer(1, bufSize, sr);
+    const data = buffer.getChannelData(0);
+
+    const baseFreq = 90 + Math.random() * 60;  // 90–150 Hz, plus haut qu'un pet
+    const endFreq  = 60 + Math.random() * 40;
+    const vib = 12 + Math.random() * 8;         // vibrato rapide = effet guttural
+
+    for (let i = 0; i < bufSize; i++) {
+      const t   = i / sr;
+      const p   = t / duration;
+      const env = Math.pow(1 - p, 0.8) * (1 - Math.exp(-t * 150));
+      const freq = baseFreq - (baseFreq - endFreq) * p;
+      // Vibrato intense pour l'effet "rot"
+      const vibrato = 1 + 0.4 * Math.sin(vib * 2 * Math.PI * t);
+      const phase   = 2 * Math.PI * freq * t * vibrato;
+      const tone    = Math.sin(phase)
+                    + Math.sin(phase * 1.5) * 0.5
+                    + Math.sin(phase * 2)   * 0.3
+                    + Math.sin(phase * 3)   * 0.15;
+      const noise   = (Math.random() * 2 - 1) * 0.2;
+      data[i] = env * (tone * 0.7 + noise) * 0.55;
+    }
+
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+
+    const bpf = ctx.createBiquadFilter();
+    bpf.type = 'bandpass';
+    bpf.frequency.value = 200 + Math.random() * 200;
+    bpf.Q.value = 0.8;
+
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = 3.0;   // FORT
+
+    src.connect(bpf);
+    bpf.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    src.start();
+  } catch(e) { console.log('Burp error:', e); }
+}
+
+// --- Victory Fanfare (son bonne réponse) ---
+function playVictorySound() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    // Arpège ascendant joyeux
+    const notes = [523.25, 659.25, 783.99, 1046.5];  // C5 E5 G5 C6
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g   = ctx.createGain();
+      osc.type = 'square';
+      osc.frequency.value = freq;
+      // Légère distorsion harmonique
+      osc.detune.value = i * 3;
+      const t = now + i * 0.08;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.35, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.3);
+    });
+    // Note finale longue
+    const osc2 = ctx.createOscillator();
+    const g2   = ctx.createGain();
+    osc2.type = 'sawtooth';
+    osc2.frequency.value = 1046.5;
+    g2.gain.setValueAtTime(0, now + 0.32);
+    g2.gain.linearRampToValueAtTime(0.28, now + 0.36);
+    g2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+    osc2.connect(g2);
+    g2.connect(ctx.destination);
+    osc2.start(now + 0.32);
+    osc2.stop(now + 0.75);
+  } catch(e) {}
+}
+
+// --- Wrong Buzz (son mauvaise réponse) ---
+function playWrongBuzz() {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g   = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(60, now + 0.5);
+    g.gain.setValueAtTime(0.5, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+    osc.connect(g);
+    g.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.55);
+  } catch(e) {}
+}
+
+// Son blip bouton
+function playBlip(freq = 440, dur = 0.05) {
+  if (!soundEnabled) return;
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.frequency.value = freq;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.22, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + dur);
+  } catch(e) {}
+}
+
+// ============================================================
+//  ÉTAT DU JEU
+// ============================================================
+let currentQ = 0;
+let score = 0;
+let streak = 0;
+let bonusScore = 0;
+let currentVideoEl = null;
+let quickEventTimer = null;
+let fartTimer = null;
+let quickEventActive = false;
+let quickEventStartTime = 0;
+let quickEventTarget = null;
+let gameActive = false;
+
+// Quiz 2
+let activeQuiz = 1;   // 1 = Jerry, 2 = Lucas
+let currentQ2 = 0;
+let score2 = 0;
+let streak2 = 0;
+let quiz1FinalScore = 0;  // pour savoir si Quiz 2 est débloqué
+
+// Question secrète
+let secretShown = false;  // ne se déclenche qu'une fois par session
+
+// ============================================================
+//  PARTICULES BG
+// ============================================================
+(function createParticles() {
+  const c = document.getElementById('particles');
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random()*100+'%';
+    p.style.animationDuration = (Math.random()*8+5)+'s';
+    p.style.animationDelay = (Math.random()*8)+'s';
+    p.style.width = p.style.height = (Math.random()*3+1)+'px';
+    c.appendChild(p);
+  }
+})();
+
+// ============================================================
+//  NAVIGATION
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+//  DÉMARRAGE
+// ============================================================
+function startGame() {
+  // Débloquer audio (doit être dans un user gesture)
+  getAudioCtx();
+  startMusic();
+
+  currentQ = 0; score = 0; streak = 0; bonusScore = 0;
+  secretShown = false;
+  gameActive = true;
+  loadQuestion();
+  showScreen('screen-question');
+  scheduleQuickEvent();
+  scheduleFart();
+}
+
+// ============================================================
+//  QUESTIONS
+// ============================================================
+function loadQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('questionEmoji').textContent = q.emoji;
+  document.getElementById('questionContent').innerHTML = q.text;
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('progressBar').style.width = ((currentQ / QUESTIONS.length) * 100) + '%';
+  enableChoices();
+
+  const streakEl = document.getElementById('streakDisplay');
+  if (streak >= 2) {
+    streakEl.textContent = '🔥 x' + streak;
+    streakEl.classList.add('visible');
+  } else {
+    streakEl.classList.remove('visible');
+  }
+}
+
+function enableChoices() {
+  ['btnClement','btnJerry'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.pointerEvents = 'auto';
+    el.style.opacity = '1';
+  });
+}
+
+function disableChoices() {
+  ['btnClement','btnJerry'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '0.6';
+  });
+}
+
+function handleAnswer(choice) {
+  disableChoices();
+  playBlip(choice === 'jerry' ? 520 : 480);
+
+  const q = QUESTIONS[currentQ];
+  // 60% chance d'être mauvaise réponse
+  const isWrong = Math.random() < 0.60;
+
+  if (isWrong) {
+    streak = 0;
+    showWrongResult(q);
+    triggerWrongEffects();
+  } else {
+    score++;
+    streak++;
+    showRightResult(q);
+    triggerRightEffects();
+  }
+  showScreen('screen-result');
+}
+
+function showWrongResult(q) {
+  const msg = q.wrongMsgs[Math.floor(Math.random() * q.wrongMsgs.length)];
+  const emojis = ['💀','🗑️','🤡','🚽','💩','🤦','😬'];
+  const titles = ['MAUVAISE RÉPONSE !','RATÉ CONNARD !','FAUX !','PITOYABLE !','AUCUNE CHANCE !'];
+  document.getElementById('resultEmoji').textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  document.getElementById('resultTitle').textContent = titles[Math.floor(Math.random()*titles.length)];
+  document.getElementById('resultTitle').className = 'result-title wrong';
+  document.getElementById('resultSub').textContent = msg;
+  document.getElementById('resultCorrectAnswer').textContent = '✅ La vérité : ' + q.explanation;
+  document.getElementById('resultCorrectAnswer').className = 'result-correct-answer wrong';
+  document.getElementById('btnNext').textContent = currentQ < QUESTIONS.length-1 ? 'QUESTION SUIVANTE →' : 'VOIR MON VERDICT →';
+}
+
+function showRightResult(q) {
+  const msg = q.rightMsgs[Math.floor(Math.random() * q.rightMsgs.length)];
+  const emojis = ['🎯','⚡','🔥','💥','🌟','🏆'];
+  const titles = ['BONNE RÉPONSE !','WUBBA LUBBA !','T\'AS DE LA CHANCE...','CORRECT ! (pour une fois)','DUB DUB !'];
+  document.getElementById('resultEmoji').textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  document.getElementById('resultTitle').textContent = titles[Math.floor(Math.random()*titles.length)];
+  document.getElementById('resultTitle').className = 'result-title right';
+  document.getElementById('resultSub').textContent = msg;
+  document.getElementById('resultCorrectAnswer').textContent = streak >= 3 ? '🔥 STREAK DE ' + streak + ' ! Savoure, ça durera pas.' : '💡 ' + q.explanation;
+  document.getElementById('resultCorrectAnswer').className = 'result-correct-answer right';
+  document.getElementById('btnNext').textContent = currentQ < QUESTIONS.length-1 ? 'QUESTION SUIVANTE →' : 'VOIR MON VERDICT →';
+}
+
+function nextQuestion() {
+  stopAllVideos();
+  currentQ++;
+  if (currentQ >= QUESTIONS.length) {
+    loadBonusQuestion();
+    showScreen('screen-bonus');
+  } else {
+    // 20% de chance de déclencher la question secrète (une seule fois)
+    if (!secretShown && Math.random() < 0.20) {
+      launchSecretQuestion(() => { loadQuestion(); showScreen('screen-question'); });
+    } else {
+      loadQuestion();
+      showScreen('screen-question');
+    }
+  }
+}
+
+// ============================================================
+//  EFFETS MAUVAISE RÉPONSE
+// ============================================================
+function triggerWrongEffects() {
+  triggerFlash('red');
+  document.body.classList.remove('shake');
+  void document.body.offsetWidth;
+  document.body.classList.add('shake');
+  setTimeout(() => document.body.classList.remove('shake'), 700);
+  spawnLoserRain();
+  // Son mauvaise réponse immédiat
+  playWrongBuzz();
+  // Jouer vidéo de lose
+  if (soundEnabled && LOSE_VIDEOS.length > 0) {
+    playVideo(LOSE_VIDEOS[Math.floor(Math.random()*LOSE_VIDEOS.length)], true);
+  }
+  // Pet OU rot sur TOUTES les mauvaises réponses (alterne aléatoirement)
+  const soundType = Math.random();
+  if (soundType < 0.5) {
+    // Pet immédiat
+    playFartSound();
+    showFartPopup('fart');
+    // Double pet si vraiment malchanceux (30%)
+    if (Math.random() < 0.3) {
+      setTimeout(() => { playFartSound(); }, 500);
+    }
+  } else {
+    // Rot
+    setTimeout(() => {
+      playBurpSound();
+      showFartPopup('burp');
+    }, 200);
+  }
+}
+
+function triggerRightEffects() {
+  triggerFlash('green');
+  spawnConfetti();
+  // Fanfare de victoire synthétisée TOUJOURS
+  playVictorySound();
+  // Son vidéo de victoire si disponible
+  if (soundEnabled && WIN_VIDEOS.length > 0) {
+    setTimeout(() => {
+      playVideo(WIN_VIDEOS[Math.floor(Math.random()*WIN_VIDEOS.length)], false);
+    }, 400);
+  }
+  // Rot/pet même sur les bonnes réponses parfois (c'est Clément quand même)
+  if (Math.random() < 0.3) {
+    setTimeout(() => {
+      playBurpSound();
+      showFartPopup('burp');
+    }, 700);
+  }
+}
+
+function triggerFlash(type) {
+  const overlay = document.getElementById('flashOverlay');
+  overlay.className = 'flash-overlay ' + type + ' flash';
+  setTimeout(() => overlay.classList.remove('flash'), 200);
+}
+
+function spawnLoserRain() {
+  const c = document.getElementById('loserRain');
+  c.innerHTML = '';
+  const words = ['LOSER','NOPE','FAUX','NUL','RATÉ','💀','🚽','GG','AÏEUH','PATHÉTIQUE','OUCH'];
+  for (let i = 0; i < 14; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'loser-word';
+      el.textContent = words[Math.floor(Math.random()*words.length)];
+      el.style.left = Math.random()*90+'%';
+      el.style.setProperty('--rot',(Math.random()*60-30)+'deg');
+      el.style.animationDuration = (Math.random()*.8+1.1)+'s';
+      el.style.fontSize = (Math.random()*2+1.3)+'rem';
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 2500);
+    }, i * 70);
+  }
+}
+
+function spawnConfetti() {
+  const colors = ['#ff0044','#ffcc00','#39ff14','#00aaff','#ff66ff','#ff6600'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = Math.random()*100+'vw';
+    el.style.top = '-20px';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.borderRadius = Math.random()>.5 ? '50%' : '0';
+    el.style.width = el.style.height = (Math.random()*8+6)+'px';
+    el.style.animationDuration = (Math.random()*2+1.5)+'s';
+    el.style.animationDelay = Math.random()*.5+'s';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+}
+
+// ============================================================
+//  FART / BURP POPUP
+// ============================================================
+const FART_MSGS = [
+  '💨 PPRRRRRT — Classique Clément',
+  '💨 Quelqu\'un a pété... c\'est toi Clément ?',
+  '💨 Ça sent la défaite ici',
+  '💨 C\'est Jerry depuis son canapé',
+  '💨 BRRAAAP — t\'as entendu ça ?',
+  '💨 Le score s\'effondre... comme l\'air ambiant',
+  '💨 Qui ? On dit rien mais on sait tous',
+];
+
+const BURP_MSGS = [
+  '🤢 BUUUURP — t\'as digéré quoi là ?!',
+  '🤢 ROT de compétition — Jerry approuve',
+  '🤢 BWAAAARK — classique',
+  '🤢 Ce son... c\'est toi ou le portail ?',
+  '🤢 BREEEEEP — niveau pro',
+];
+
+function showFartPopup(type = 'fart') {
+  const old = document.querySelector('.fart-popup');
+  if (old) old.remove();
+  const msgs = type === 'burp' ? BURP_MSGS : FART_MSGS;
+  const popup = document.createElement('div');
+  popup.className = 'fart-popup';
+  popup.textContent = msgs[Math.floor(Math.random()*msgs.length)];
+  if (type === 'burp') popup.style.borderColor = '#4a9';
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 3200);
+}
+
+// ============================================================
+//  TIMER FART/ROT ALÉATOIRE (toutes les 15-30s pendant le jeu)
+// ============================================================
+function scheduleFart() {
+  clearTimeout(fartTimer);
+  if (!gameActive) return;
+  const delay = (15 + Math.random() * 18) * 1000;  // 15-33s
+  fartTimer = setTimeout(() => {
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen && (activeScreen.id === 'screen-question' || activeScreen.id === 'screen-result')) {
+      if (Math.random() < 0.55) {
+        playFartSound();
+        showFartPopup('fart');
+      } else {
+        playBurpSound();
+        showFartPopup('burp');
+      }
+    }
+    scheduleFart();
+  }, delay);
+}
+
+// ============================================================
+//  VIDÉO
+// ============================================================
+function playVideo(src, isLose) {
+  stopAllVideos();
+  const vid = document.createElement('video');
+  vid.src = src;
+  vid.playsinline = true;
+  vid.style.display = 'none';
+
+  const container = document.getElementById('videoContainer');
+  // Réutiliser ou créer un élément visible
+  let displayVid = container.querySelector('video.active-vid');
+  if (!displayVid) {
+    displayVid = document.createElement('video');
+    displayVid.className = 'active-vid';
+    displayVid.playsinline = true;
+    displayVid.style.borderColor = isLose ? 'var(--red)' : 'var(--green)';
+    displayVid.style.boxShadow = isLose ? '0 0 20px var(--red)' : '0 0 20px var(--green)';
+    container.appendChild(displayVid);
+  }
+
+  displayVid.src = src;
+  displayVid.style.borderColor = isLose ? '#ff0044' : '#39ff14';
+  displayVid.style.boxShadow = isLose ? '0 0 20px #ff0044' : '0 0 20px #39ff14';
+  container.classList.add('visible');
+  currentVideoEl = displayVid;
+
+  displayVid.play().catch(() => {});
+}
+
+function stopAllVideos() {
+  document.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; });
+  const container = document.getElementById('videoContainer');
+  container.classList.remove('visible');
+  const active = container.querySelector('video.active-vid');
+  if (active) active.remove();
+  currentVideoEl = null;
+}
+
+function toggleVideoMute() {
+  if (currentVideoEl) {
+    currentVideoEl.muted = !currentVideoEl.muted;
+    document.querySelector('.btn-mute').textContent = currentVideoEl.muted ? '🔊 Remettre' : '🔇 Couper';
+  }
+}
+
+// ============================================================
+//  QUICK CLICK EVENT
+// ============================================================
+function scheduleQuickEvent() {
+  clearTimeout(quickEventTimer);
+  if (!gameActive) return;
+  // Toutes les 20-40 secondes
+  const delay = (20 + Math.random() * 20) * 1000;
+
+  // Avertissement visuel 8s avant
+  const warnDelay = Math.max(0, delay - 8000);
+  setTimeout(() => {
+    if (gameActive && !quickEventActive) {
+      const warn = document.getElementById('eventWarning');
+      if (warn) warn.classList.add('visible');
+      playBlip(330, 0.08);
+      setTimeout(() => { if (warn) warn.classList.remove('visible'); }, 8500);
+    }
+  }, warnDelay);
+
+  quickEventTimer = setTimeout(() => {
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen && activeScreen.id === 'screen-question') {
+      launchQuickEvent();
+    } else {
+      // Retenter dans 8s si pas sur l'écran question
+      quickEventTimer = setTimeout(() => scheduleQuickEvent(), 8000);
+    }
+  }, delay);
+}
+
+function launchQuickEvent() {
+  if (quickEventActive) return;
+  quickEventActive = true;
+
+  const targets = ['clement','jerry'];
+  quickEventTarget = targets[Math.floor(Math.random()*2)];
+  const targetName = quickEventTarget === 'clement' ? 'CLÉMENT' : 'JERRY';
+
+  document.getElementById('quickTargetName').textContent = targetName;
+  document.getElementById('quickReactionTime').textContent = '';
+  document.getElementById('quickTimer').textContent = 'PRÊT...';
+  document.getElementById('quickTimer').classList.remove('go');
+
+  // Construire les faces
+  const facesEl = document.getElementById('quickFaces');
+  facesEl.innerHTML = '';
+
+  const facesClement = document.createElement('div');
+  facesClement.className = 'quick-face-btn';
+  facesClement.innerHTML = `<img src="IMG_2182.PNG" alt="Clément"><div class="quick-face-name" style="color:#ff6688">CLÉMENT</div>`;
+  facesClement.onclick = () => handleQuickClick('clement');
+
+  const facesJerry = document.createElement('div');
+  facesJerry.className = 'quick-face-btn';
+  facesJerry.innerHTML = `<img src="IMG_2183.PNG" alt="Jerry" style="background:#fff;padding:4px;object-fit:contain;"><div class="quick-face-name" style="color:var(--green)">JERRY</div>`;
+  facesJerry.onclick = () => handleQuickClick('jerry');
+
+  // Ordre aléatoire
+  if (Math.random() < 0.5) {
+    facesEl.appendChild(facesClement);
+    facesEl.appendChild(facesJerry);
+  } else {
+    facesEl.appendChild(facesJerry);
+    facesEl.appendChild(facesClement);
+  }
+
+  // Désactiver pendant le countdown
+  facesClement.style.pointerEvents = 'none';
+  facesJerry.style.pointerEvents = 'none';
+
+  document.getElementById('quickEventOverlay').classList.add('active');
+
+  // Countdown 3..2..1..GO!
+  let count = 3;
+  const timerEl = document.getElementById('quickTimer');
+
+  const countdown = setInterval(() => {
+    if (count > 0) {
+      timerEl.textContent = count;
+      playBlip(220 + count * 80, 0.1);
+      count--;
+    } else {
+      clearInterval(countdown);
+      timerEl.textContent = 'CLIQUE !!!';
+      timerEl.classList.add('go');
+      playBlip(880, 0.15);
+      // Activer les boutons
+      facesClement.style.pointerEvents = 'auto';
+      facesJerry.style.pointerEvents = 'auto';
+      quickEventStartTime = performance.now();
+      // Timeout si pas de clic (5s)
+      setTimeout(() => {
+        if (quickEventActive) {
+          handleQuickResult(false, 9999, 'TROP LENT ! Même Jerry aurait cliqué.');
+        }
+      }, 5000);
+    }
+  }, 800);
+}
+
+function handleQuickClick(clicked) {
+  if (!quickEventActive || !quickEventStartTime) return;
+  const reactionMs = Math.round(performance.now() - quickEventStartTime);
+  const isCorrect = clicked === quickEventTarget;
+  playBlip(isCorrect ? 660 : 220, 0.08);
+  handleQuickResult(isCorrect, reactionMs);
+}
+
+function handleQuickResult(isCorrect, reactionMs, overrideMsg) {
+  quickEventActive = false;
+  quickEventStartTime = 0;
+
+  const timerEl = document.getElementById('quickTimer');
+  const reactionEl = document.getElementById('quickReactionTime');
+
+  if (isCorrect) {
+    let msg = '';
+    if (reactionMs < 300) msg = '⚡ ' + reactionMs + 'ms — RÉFLEXES DE RICK ! INHUMAIN !';
+    else if (reactionMs < 600) msg = '🔥 ' + reactionMs + 'ms — Pas mal pour toi';
+    else if (reactionMs < 1200) msg = '🐌 ' + reactionMs + 'ms — T\'aurais pu faire mieux...';
+    else msg = '🐢 ' + reactionMs + 'ms — Vitesse Jerry confirmée';
+
+    timerEl.textContent = '✅ CORRECT !';
+    timerEl.style.color = 'var(--green)';
+    reactionEl.textContent = msg;
+    triggerFlash('green');
+    spawnConfetti();
+    playVictorySound();
+    score++; // bonus point !
+    document.getElementById('scoreDisplay').textContent = score;
+  } else {
+    const msg = overrideMsg || '❌ ' + (reactionMs >= 9000 ? 'TROP LENT' : reactionMs + 'ms') + ' — MAUVAISE TÊTE ! Comme Jerry avec un choix de vie.';
+    timerEl.textContent = '❌ RATÉ !';
+    timerEl.style.color = 'var(--red)';
+    reactionEl.textContent = msg;
+    triggerWrongEffects();
+    // Pet bonus sur le quick event raté
+    setTimeout(() => { playFartSound(); showFartPopup('fart'); }, 900);
+  }
+
+  setTimeout(() => {
+    timerEl.style.color = '';
+    document.getElementById('quickEventOverlay').classList.remove('active');
+    scheduleQuickEvent();
+  }, 2500);
+}
+
+// ============================================================
+//  BONUS GOAT
+// ============================================================
+function loadBonusQuestion() {
+  clearTimeout(quickEventTimer);
+  clearTimeout(fartTimer);
+  const q = BONUS_QUESTION;
+  document.getElementById('bonusQuestionText').textContent = '🐐 ' + q.text;
+  const container = document.getElementById('bonusChoices');
+  container.innerHTML = '';
+  q.choices.forEach((choice, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'bonus-choice';
+    btn.textContent = choice.text;
+    btn.onclick = () => handleBonusAnswer(i);
+    container.appendChild(btn);
+  });
+}
+
+function handleBonusAnswer(idx) {
+  const q = BONUS_QUESTION;
+  const isCorrect = q.choices[idx].correct;
+  document.querySelectorAll('.bonus-choice').forEach((btn, i) => {
+    btn.onclick = null;
+    btn.classList.add(q.choices[i].correct ? 'correct' : 'wrong');
+  });
+  if (isCorrect) {
+    bonusScore = 1;
+    triggerFlash('green');
+    spawnConfetti();
+    playBlip(880, 0.2);
+  } else {
+    bonusScore = 0;
+    triggerWrongEffects();
+  }
+  setTimeout(() => showFinalResults(), isCorrect ? 2000 : 2500);
+}
+
+// ============================================================
+//  RÉSULTATS FINAUX
+// ============================================================
+function showFinalResults() {
+  gameActive = false;
+  stopAllVideos();
+  clearTimeout(quickEventTimer);
+  clearTimeout(fartTimer);
+  document.getElementById('quickEventOverlay').classList.remove('active');
+
+  const total = score;
+  document.getElementById('finalScore').textContent = total + (bonusScore ? '+🐐' : '');
+  document.getElementById('totalPossible').textContent = QUESTIONS.length;
+
+  let icon, title, sub, borderColor;
+  if (total <= 2) {
+    icon='🤡'; title="T'ES JERRY. T'ES LITTÉRALEMENT JERRY.";
+    sub="Félicitations. T'as atteint le fond. Et t'as creusé. Jerry aurait fait pareil, sauf qu'il aurait vendu la pelle avant.";
+    borderColor='var(--red)';
+  } else if (total <= 5) {
+    icon='🚽'; title="NIVEAU JERRY AVANCÉ";
+    sub="Même Pluto te trouve pathétique. Et Pluto n'est même plus une planète depuis que Jerry a perdu ce débat aussi.";
+    borderColor='#ff6600';
+  } else if (total <= 7) {
+    icon='📈'; title="JERRY EN RÉMISSION";
+    sub="Pas si mal... pour quelqu'un dont l'humiliation est une devise officielle en Enfer. Tu progresses. Lentement.";
+    borderColor='var(--yellow)';
+  } else {
+    icon='🕵️'; title="TRICHE DÉTECTÉE";
+    sub="Soit t'as triché. Soit le jeu est cassé. Soit Rick a reprogrammé la réalité. Dans tous les cas : Wubba Lubba Dub Dub.";
+    borderColor='var(--green)';
+  }
+
+  document.getElementById('verdictIcon').textContent = icon;
+  document.getElementById('verdictText').textContent = title;
+  document.getElementById('verdictSub').textContent = sub + (bonusScore ? ' 🐐 GOAT R&M en bonus !' : ' (Même pas GOAT de R&M. Honte.)');
+  document.getElementById('verdictCard').style.borderColor = borderColor;
+
+  // Bouton Quiz 2 — débloqué si score >= 6 (bonus goat compte aussi)
+  quiz1FinalScore = total;
+  const effectiveScore = total + bonusScore;
+  const q2Unlocked = effectiveScore >= 6;
+  const q2Btn  = document.getElementById('btnQuiz2');
+  const q2Lock = document.getElementById('quiz2Lock');
+  if (q2Unlocked) {
+    q2Btn.style.display  = 'flex';
+    q2Lock.style.display = 'none';
+    // Petit son de débloquage
+    setTimeout(() => playBlip(880, 0.2), 800);
+    setTimeout(() => playBlip(1100, 0.15), 1000);
+  } else {
+    q2Btn.style.display  = 'none';
+    q2Lock.style.display = 'block';
+  }
+
+  showScreen('screen-final');
+  setTimeout(() => triggerFlash(total <= 3 ? 'red' : 'green'), 400);
+  if (total > 7) { setTimeout(spawnConfetti, 500); setTimeout(spawnConfetti, 1200); }
+}
+
+function resetGame() {
+  stopAllVideos();
+  clearTimeout(quickEventTimer);
+  clearTimeout(fartTimer);
+  quickEventActive = false;
+  activeQuiz = 1;
+  document.getElementById('quickEventOverlay').classList.remove('active');
+  showScreen('screen-intro');
+}
+
+// ============================================================
+//  QUIZ 2 — CLÉMENT VS LUCAS
+// ============================================================
+function startQuiz2() {
+  activeQuiz = 2;
+  currentQ2 = 0; score2 = 0; streak2 = 0;
+  secretShown = false;
+  gameActive = true;
+  loadQuestion2();
+  showScreen('screen-q2');
+  scheduleFart();
+}
+
+function loadQuestion2() {
+  const q = QUESTIONS_2[currentQ2];
+  document.getElementById('questionEmoji2').textContent = q.emoji;
+  document.getElementById('questionContent2').innerHTML = q.text;
+  document.getElementById('qNum2').textContent = currentQ2 + 1;
+  document.getElementById('scoreDisplay2').textContent = score2;
+  document.getElementById('progressBar2').style.width = ((currentQ2 / QUESTIONS_2.length) * 100) + '%';
+  enableChoices2();
+
+  const streakEl = document.getElementById('streakDisplay2');
+  if (streak2 >= 2) {
+    streakEl.textContent = '🔥 x' + streak2;
+    streakEl.classList.add('visible');
+  } else {
+    streakEl.classList.remove('visible');
+  }
+}
+
+function enableChoices2() {
+  ['btnClement2','btnLucas'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.pointerEvents = 'auto'; el.style.opacity = '1'; }
+  });
+}
+
+function disableChoices2() {
+  ['btnClement2','btnLucas'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.pointerEvents = 'none'; el.style.opacity = '0.6'; }
+  });
+}
+
+function handleAnswer2(choice) {
+  disableChoices2();
+  playBlip(choice === 'lucas' ? 520 : 480);
+
+  const q = QUESTIONS_2[currentQ2];
+  const isWrong = Math.random() < 0.60;
+
+  if (isWrong) {
+    streak2 = 0;
+    showWrongResult2(q);
+    triggerWrongEffects();
+  } else {
+    score2++;
+    streak2++;
+    showRightResult2(q);
+    triggerRightEffects();
+  }
+  // Réutiliser l'écran résultat existant
+  showScreen('screen-result');
+}
+
+function showWrongResult2(q) {
+  const msg = q.wrongMsgs[Math.floor(Math.random() * q.wrongMsgs.length)];
+  const emojis = ['💀','🤢','🤡','🚽','💩','☠️','😱'];
+  const titles = ['MAUVAISE RÉPONSE !','NON MAIS SÉRIEUX ?!','FAUX !','T\'AS RIEN COMPRIS !','PATHÉTIQUE !'];
+  document.getElementById('resultEmoji').textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  document.getElementById('resultTitle').textContent = titles[Math.floor(Math.random()*titles.length)];
+  document.getElementById('resultTitle').className = 'result-title wrong';
+  document.getElementById('resultSub').textContent = msg;
+  document.getElementById('resultCorrectAnswer').textContent = '💀 La vérité : ' + q.explanation;
+  document.getElementById('resultCorrectAnswer').className = 'result-correct-answer wrong';
+  document.getElementById('btnNext').textContent = currentQ2 < QUESTIONS_2.length-1 ? 'QUESTION SUIVANTE →' : 'VOIR LE VERDICT →';
+  document.getElementById('btnNext').onclick = nextQuestion2;
+}
+
+function showRightResult2(q) {
+  const msg = q.rightMsgs[Math.floor(Math.random() * q.rightMsgs.length)];
+  const emojis = ['🎯','⚡','🔥','💥','🌶️','🤙'];
+  const titles = ['EXACT !','BIEN SÛR QUE C\'EST ÇA !','VOILÀ !','T\'AS OSÉ LE DIRE !','CONFIRMÉ !'];
+  document.getElementById('resultEmoji').textContent = emojis[Math.floor(Math.random()*emojis.length)];
+  document.getElementById('resultTitle').textContent = titles[Math.floor(Math.random()*titles.length)];
+  document.getElementById('resultTitle').className = 'result-title right';
+  document.getElementById('resultSub').textContent = msg;
+  document.getElementById('resultCorrectAnswer').textContent = streak2 >= 3 ? '🔥 STREAK ' + streak2 + ' !' : '💡 ' + q.explanation;
+  document.getElementById('resultCorrectAnswer').className = 'result-correct-answer right';
+  document.getElementById('btnNext').textContent = currentQ2 < QUESTIONS_2.length-1 ? 'QUESTION SUIVANTE →' : 'VOIR LE VERDICT →';
+  document.getElementById('btnNext').onclick = nextQuestion2;
+}
+
+function nextQuestion2() {
+  stopAllVideos();
+  document.getElementById('btnNext').onclick = nextQuestion;
+  currentQ2++;
+  if (currentQ2 >= QUESTIONS_2.length) {
+    showFinalResults2();
+  } else {
+    // 20% de chance de déclencher la question secrète (une seule fois)
+    if (!secretShown && Math.random() < 0.20) {
+      launchSecretQuestion(() => { loadQuestion2(); showScreen('screen-q2'); });
+    } else {
+      loadQuestion2();
+      showScreen('screen-q2');
+    }
+  }
+}
+
+function showFinalResults2() {
+  gameActive = false;
+  stopAllVideos();
+  clearTimeout(quickEventTimer);
+  clearTimeout(fartTimer);
+
+  const total = score2;
+  document.getElementById('finalScore2').textContent = total;
+
+  let icon, title, sub, borderColor;
+  if (total <= 2) {
+    icon='🙈'; title='T\'AS RIEN VU';
+    sub='Soit t\'es trop gentil, soit t\'étais pas là pour les moments clés. Les deux probablement.';
+    borderColor='#ff0088';
+  } else if (total <= 5) {
+    icon='😬'; title='T\'ES AU COURANT DE CERTAINS TRUCS';
+    sub='T\'as entendu parler de la spanish girl. Tu sais pour Ralarabdoul. Mais les détails t\'échappent encore.';
+    borderColor='#ff6600';
+  } else if (total <= 7) {
+    icon='🕵️'; title='NIVEAU INITIÉ';
+    sub='"Maxi-Paxi-Dafalgan", "Saluuut...", "TA LES CRAMPTÉ ?" — tu connais les classiques. Respect.';
+    borderColor='var(--yellow)';
+  } else {
+    icon='🤝'; title='TU SAIS TROP DE CHOSES';
+    sub='T\'es dangereux. Ces informations ne devraient pas être en circulation. Efface ton historique.';
+    borderColor='var(--green)';
+  }
+
+  document.getElementById('verdictIcon2').textContent = icon;
+  document.getElementById('verdictText2').textContent = title;
+  document.getElementById('verdictSub2').textContent = sub;
+  document.getElementById('verdictCard2').style.borderColor = borderColor;
+  showScreen('screen-final2');
+  triggerFlash(total <= 3 ? 'red' : 'green');
+  if (total > 7) { setTimeout(spawnConfetti, 400); }
+
+  // Pet de célébration/défaite
+  setTimeout(() => {
+    if (total <= 3) { playFartSound(); showFartPopup('fart'); }
+    else { playBurpSound(); showFartPopup('burp'); }
+  }, 600);
+}
+
+// ============================================================
+//  QUESTION SECRÈTE — QUOIQUOULORENCEEE
+// ============================================================
+function launchSecretQuestion(onDone) {
+  secretShown = true;
+  const overlay = document.getElementById('quoiquouOverlay');
+  const revealEl = document.getElementById('quoiquouReveal');
+  const choicesEl = document.getElementById('quoiquouChoices');
+
+  revealEl.classList.remove('visible');
+  choicesEl.innerHTML = '';
+
+  // Construire les deux boutons (Clément + adversaire du quiz actif)
+  const opponentImg   = activeQuiz === 2 ? 'Subject.png'   : 'IMG_2183.PNG';
+  const opponentName  = activeQuiz === 2 ? 'LUCAS'         : 'JERRY';
+  const opponentColor = activeQuiz === 2 ? '#ffaa00'       : 'var(--green)';
+  const opponentStyle = activeQuiz === 2 ? ''              : 'background:#fff;padding:4px;object-fit:contain;';
+
+  const makeBtn = (img, name, color, style, key) => {
+    const btn = document.createElement('div');
+    btn.className = 'quoiquou-btn';
+    btn.innerHTML = `<img src="${img}" alt="${name}" style="${style}"><span style="color:${color}">${name}</span>`;
+    btn.onclick = () => handleSecretClick(key, onDone);
+    return btn;
+  };
+
+  // Ordre aléatoire
+  const btnClem = makeBtn('IMG_2182.PNG', 'CLÉMENT', '#ff6688', '', 'clement');
+  const btnOpp  = makeBtn(opponentImg, opponentName, opponentColor, opponentStyle, 'other');
+
+  if (Math.random() < 0.5) { choicesEl.appendChild(btnClem); choicesEl.appendChild(btnOpp); }
+  else                      { choicesEl.appendChild(btnOpp);  choicesEl.appendChild(btnClem); }
+
+  overlay.classList.add('active');
+
+  // Jouer un son bizarre à l'ouverture
+  playBlip(220, 0.05);
+  setTimeout(() => playBlip(440, 0.05), 100);
+  setTimeout(() => playBlip(880, 0.08), 200);
+  setTimeout(() => playFartSound(), 400);
+}
+
+function handleSecretClick(choice, onDone) {
+  // Désactiver les boutons
+  document.querySelectorAll('.quoiquou-btn').forEach(b => b.onclick = null);
+
+  // Chaos total — peu importe ce qu'on clique
+  triggerFlash('green');
+  spawnConfetti();
+  playVictorySound();
+  setTimeout(() => { playFartSound(); playBurpSound(); }, 300);
+  setTimeout(() => spawnConfetti(), 500);
+
+  // Révéler la vraie réponse
+  const revealEl = document.getElementById('quoiquouReveal');
+  revealEl.classList.add('visible');
+
+  // Fermer après 5s et continuer le jeu
+  setTimeout(() => {
+    document.getElementById('quoiquouOverlay').classList.remove('active');
+    onDone();
+  }, 5000);
+}
+
+// ============================================================
+//  EASTER EGG KONAMI
+// ============================================================
+let konami = [];
+const KONAMI_CODE = [38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown', e => {
+  konami.push(e.keyCode);
+  if (konami.length > 10) konami.shift();
+  if (konami.join(',') === KONAMI_CODE.join(',')) {
+    document.body.style.filter = 'hue-rotate(180deg) saturate(3) contrast(1.2)';
+    alert('🛸 PORTAIL DIMENSIONNEL OUVERT\n\nRick approuve ce site.\n\n"Nobody exists on purpose, nobody belongs anywhere, everybody\'s gonna die.\nCome watch TV." — Rick Sanchez\n\n(le jeu reprend dans 3s)');
+    playBlip(220, 1);
+    setTimeout(() => { document.body.style.filter = ''; }, 3000);
+    konami = [];
+  }
+});
+
+// Pré-charger les vidéos après interaction
+document.addEventListener('click', () => {
+  getAudioCtx();
+  document.querySelectorAll('video').forEach(v => v.load());
+}, { once: true });
+</script>
+</body>
+</html>
