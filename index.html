@@ -371,14 +371,6 @@
     100% { opacity:0; transform:translateX(-50%) translateY(-30px); }
   }
 
-  /* ===== VIDEO CONTAINER ===== */
-  .video-container {
-    position:fixed; bottom:16px; right:12px; z-index:900;
-    display:none; flex-direction:column; align-items:flex-end; gap:6px;
-  }
-  .video-container.visible { display:flex; }
-  .video-container video { width:clamp(130px,35vw,200px); border-radius:12px; border:3px solid var(--red); box-shadow:0 0 20px var(--red); }
-  .btn-mute { font-size:.75rem; background:rgba(255,0,68,.3); border:1px solid var(--red); color:#fff; padding:4px 10px; border-radius:20px; cursor:pointer; }
 
   /* ===== QUICK CLICK EVENT ===== */
   .quick-event-overlay {
@@ -622,9 +614,7 @@
     .quick-event-instruction { font-size: clamp(1.1rem, 4.5vw, 2rem); margin-bottom: 12px; }
     .quick-event-title { font-size: clamp(1.5rem, 6vw, 3rem); }
     .quick-timer { font-size: clamp(2.5rem, 10vw, 5rem); margin-bottom: 12px; }
-    .video-container { bottom: 10px; right: 8px; }
-    .video-container video { width: 110px; }
-    .fart-popup { font-size: .85rem; padding: 8px 14px; white-space: normal; text-align: center; width: 88%; bottom: 70px; }
+.fart-popup { font-size: .85rem; padding: 8px 14px; white-space: normal; text-align: center; width: 88%; bottom: 70px; }
     .result-emoji { font-size: clamp(3rem, 12vw, 5rem); }
     .result-title { font-size: clamp(1.8rem, 8vw, 4rem); }
     .result-sub { font-size: .9rem; padding: 10px; }
@@ -683,13 +673,8 @@
 <!-- FLASH OVERLAY -->
 <div class="flash-overlay" id="flashOverlay"></div>
 
-<!-- VIDÉOS CACHÉES -->
-<div class="video-container" id="videoContainer">
-  <button class="btn-mute" onclick="toggleVideoMute()">🔇 Couper</button>
-  <video id="video1" src="154E50A0-B16B-45E8-87A5-1896695C560F.MOV" playsinline></video>
-  <video id="video2" src="5384C0BF-52A8-4E92-AC97-55781BD8FA99.MOV" playsinline></video>
-  <!-- Les vidéos de victoire sont gérées dynamiquement -->
-</div>
+<!-- AUDIO CACHÉ (audio des vidéos uniquement, jamais affiché) -->
+<div id="audioContainer" style="display:none"></div>
 
 <!-- LOSER RAIN -->
 <div class="loser-rain" id="loserRain"></div>
@@ -1709,7 +1694,7 @@ function triggerWrongEffects() {
   playWrongBuzz();
   // Jouer vidéo de lose
   if (soundEnabled && LOSE_VIDEOS.length > 0) {
-    playVideo(LOSE_VIDEOS[Math.floor(Math.random()*LOSE_VIDEOS.length)], true);
+    playVideo(LOSE_VIDEOS[Math.floor(Math.random()*LOSE_VIDEOS.length)]);
   }
   // Pet OU rot sur TOUTES les mauvaises réponses (alterne aléatoirement)
   const soundType = Math.random();
@@ -1738,7 +1723,7 @@ function triggerRightEffects() {
   // Son vidéo de victoire si disponible
   if (soundEnabled && WIN_VIDEOS.length > 0) {
     setTimeout(() => {
-      playVideo(WIN_VIDEOS[Math.floor(Math.random()*WIN_VIDEOS.length)], false);
+      playVideo(WIN_VIDEOS[Math.floor(Math.random()*WIN_VIDEOS.length)]);
     }, 400);
   }
   // Rot/pet même sur les bonnes réponses parfois (c'est Clément quand même)
@@ -1848,50 +1833,24 @@ function scheduleFart() {
 }
 
 // ============================================================
-//  VIDÉO
+//  VIDÉO (audio uniquement — jamais affiché)
 // ============================================================
-function playVideo(src, isLose) {
+function playVideo(src) {
   stopAllVideos();
   const vid = document.createElement('video');
   vid.src = src;
   vid.playsinline = true;
+  vid.volume = 1.0;
   vid.style.display = 'none';
-
-  const container = document.getElementById('videoContainer');
-  // Réutiliser ou créer un élément visible
-  let displayVid = container.querySelector('video.active-vid');
-  if (!displayVid) {
-    displayVid = document.createElement('video');
-    displayVid.className = 'active-vid';
-    displayVid.playsinline = true;
-    displayVid.style.borderColor = isLose ? 'var(--red)' : 'var(--green)';
-    displayVid.style.boxShadow = isLose ? '0 0 20px var(--red)' : '0 0 20px var(--green)';
-    container.appendChild(displayVid);
-  }
-
-  displayVid.src = src;
-  displayVid.style.borderColor = isLose ? '#ff0044' : '#39ff14';
-  displayVid.style.boxShadow = isLose ? '0 0 20px #ff0044' : '0 0 20px #39ff14';
-  container.classList.add('visible');
-  currentVideoEl = displayVid;
-
-  displayVid.play().catch(() => {});
+  document.getElementById('audioContainer').appendChild(vid);
+  currentVideoEl = vid;
+  vid.play().catch(() => {});
 }
 
 function stopAllVideos() {
-  document.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; });
-  const container = document.getElementById('videoContainer');
-  container.classList.remove('visible');
-  const active = container.querySelector('video.active-vid');
-  if (active) active.remove();
+  const container = document.getElementById('audioContainer');
+  container.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; v.remove(); });
   currentVideoEl = null;
-}
-
-function toggleVideoMute() {
-  if (currentVideoEl) {
-    currentVideoEl.muted = !currentVideoEl.muted;
-    document.querySelector('.btn-mute').textContent = currentVideoEl.muted ? '🔊 Remettre' : '🔇 Couper';
-  }
 }
 
 // ============================================================
